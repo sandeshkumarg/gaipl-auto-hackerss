@@ -36,13 +36,13 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
 
     // Build the conversation context that includes system dependencies and logs.
     const messagesForBackend = [
-      {
+      /*{
         role: "system",
         content: `You are a troubleshooting assistant with expertise in analyzing system dependencies and system logs.
 System Dependencies: ${systemDependencies || "None provided"}
 System Logs: ${systemLogs || "No logs available"}
 Based on these details, provide troubleshooting advice and suggest corrective actions.`
-      },
+      },*/
       { role: "user", content: trimmedInput }
     ];
 
