@@ -1,265 +1,210 @@
 export const incidents = [
   {
-    id: 1,
-    name: "Application A",
-    appName: "Application A",
-    dependencies: [
-      { id: "B", name: "Application B" },
-      { id: "E", name: "Application E" },
-      { id: "DB", name: "Database" },
-      { id: "ExtAPI", name: "External API" }
-    ],
-    dependents: [
-      { id: "S", name: "Application S" },
-      { id: "T", name: "Application T" }
-    ]
-  },
-  {
-    id: 2,
-    name: "Application B",
-    appName: "Application B",
-    dependencies: [
-      { id: "C", name: "Application C" },
-      { id: "D", name: "Application D" },
-      { id: "Cache", name: "Cache" }
-    ],
-    dependents: [
-      { id: "A", name: "Application A" }
-    ]
-  },
-  {
-    id: 3,
-    name: "Application C",
-    appName: "Application C",
-    dependencies: [
-      { id: "D", name: "Application D" },
-      { id: "F", name: "Application F" },
-      { id: "Kafka", name: "Kafka Queue" }
-    ],
-    dependents: [
-      { id: "B", name: "Application B" }
-    ]
-  },
-  {
-    id: 4,
-    name: "Application D",
-    appName: "Application D",
-    dependencies: [
-      { id: "F", name: "Application F" },
-      { id: "ExtAPI", name: "External API" }
-    ],
-    dependents: [
-      { id: "B", name: "Application B" },
-      { id: "C", name: "Application C" }
-    ]
-  },
-  {
-    id: 5,
-    name: "Application E",
-    appName: "Application E",
-    dependencies: [
-      { id: "F", name: "Application F" },
-      { id: "G", name: "Application G" },
-      { id: "Cache", name: "Cache" }
-    ],
-    dependents: [
-      { id: "A", name: "Application A" }
-    ]
-  },
-  {
-    id: 6,
-    name: "Application F",
-    appName: "Application F",
-    dependencies: [
-      { id: "H", name: "Application H" },
-      { id: "DB", name: "Database" }
-    ],
-    dependents: [
-      { id: "C", name: "Application C" },
-      { id: "D", name: "Application D" },
-      { id: "E", name: "Application E" }
-    ]
-  },
-  {
-    id: 7,
-    name: "Application G",
-    appName: "Application G",
-    dependencies: [
-      { id: "I", name: "Application I" },
-      { id: "J", name: "Application J" },
-      { id: "Kafka", name: "Kafka Queue" }
-    ],
-    dependents: [
-      { id: "E", name: "Application E" }
-    ]
-  },
-  {
-    id: 8,
-    name: "Application H",
-    appName: "Application H",
-    dependencies: [
-      { id: "I", name: "Application I" },
-      { id: "ExtAPI", name: "External API" }
-    ],
-    dependents: [
-      { id: "F", name: "Application F" }
-    ]
-  },
-  {
-    id: 9,
-    name: "Application I",
-    appName: "Application I",
-    dependencies: [
-      { id: "K", name: "Application K" },
-      { id: "DB", name: "Database" }
-    ],
-    dependents: [
-      { id: "G", name: "Application G" },
-      { id: "H", name: "Application H" }
-    ]
-  },
-  {
     id: 10,
-    name: "Application J",
-    appName: "Application J",
+    name: "ShopVerse Frontend",
+    appName: "ShopVerse Frontend",
     dependencies: [
-      { id: "K", name: "Application K" },
-      { id: "L", name: "Application L" },
-      { id: "Cache", name: "Cache" }
+      { id: "11", name: "ShopVerse Gateway" },
+      { id: "20", name: "CloudCore" }
     ],
-    dependents: [
-      { id: "G", name: "Application G" }
-    ]
+    dependents: [],
+    platform: {
+      type: "Kubernetes",
+      namespace: "frontend-ns",
+      hosts: ["k8s-node-101", "k8s-node-102"]
+    }
   },
   {
     id: 11,
-    name: "Application K",
-    appName: "Application K",
+    name: "ShopVerse Gateway",
+    appName: "ShopVerse Gateway",
     dependencies: [
-      { id: "M", name: "Application M" },
-      { id: "N", name: "Application N" },
-      { id: "Kafka", name: "Kafka Queue" }
+      { id: "12", name: "Catalog Explorer" },
+      { id: "20", name: "CloudCore" }
     ],
     dependents: [
-      { id: "I", name: "Application I" },
-      { id: "J", name: "Application J" }
-    ]
+      { id: "10", name: "ShopVerse Frontend" },
+      { id: "14", name: "Account Nexus" },
+      { id: "15", name: "CartOwl" },
+      { id: "16", name: "Payments Prime" },
+      { id: "17", name: "Fulfillment Hub" },
+      { id: "19", name: "NotifyMe" }
+    ],
+    platform: {
+      type: "Kubernetes",
+      namespace: "gateway-ns",
+      hosts: ["k8s-node-103", "k8s-node-104"]
+    }
   },
   {
     id: 12,
-    name: "Application L",
-    appName: "Application L",
+    name: "Catalog Explorer",
+    appName: "Catalog Explorer",
     dependencies: [
-      { id: "N", name: "Application N" },
-      { id: "O", name: "Application O" },
-      { id: "ExtAPI", name: "External API" }
+      { id: "Elasticsearch", name: "Elasticsearch Cluster" },
+      { id: "MongoDB", name: "MongoDB DB" },
+      { id: "20", name: "CloudCore" }
     ],
     dependents: [
-      { id: "J", name: "Application J" }
-    ]
+      { id: "11", name: "ShopVerse Gateway" },
+      { id: "13", name: "SmartSuggest" }
+    ],
+    platform: {
+      type: "Linux Servers",
+      hostnames: ["linux-cat-01", "linux-cat-02"],
+      os: "Ubuntu 20.04 LTS"
+    }
   },
   {
     id: 13,
-    name: "Application M",
-    appName: "Application M",
+    name: "SmartSuggest",
+    appName: "SmartSuggest",
     dependencies: [
-      { id: "O", name: "Application O" },
-      { id: "DB", name: "Database" }
+      { id: "12", name: "Catalog Explorer" },
+      { id: "TensorFlow", name: "TensorFlow" },
+      { id: "20", name: "CloudCore" }
     ],
     dependents: [
-      { id: "K", name: "Application K" }
-    ]
+      { id: "11", name: "ShopVerse Gateway" }
+    ],
+    platform: {
+      type: "PCF",
+      namespace: "smart-pcf-ns",
+      hosts: ["pcf-host-03", "pcf-host-04"]
+    }
   },
   {
     id: 14,
-    name: "Application N",
-    appName: "Application N",
+    name: "Account Nexus",
+    appName: "Account Nexus",
     dependencies: [
-      { id: "P", name: "Application P" },
-      { id: "Q", name: "Application Q" },
-      { id: "Cache", name: "Cache" }
+      { id: "Firebase Auth", name: "Firebase Auth" },
+      { id: "20", name: "CloudCore" }
     ],
     dependents: [
-      { id: "K", name: "Application K" },
-      { id: "L", name: "Application L" }
-    ]
+      { id: "11", name: "ShopVerse Gateway" }
+    ],
+    platform: {
+      type: "Windows Servers",
+      hostnames: ["win-acc-01", "win-acc-02"],
+      os: "Windows Server 2019"
+    }
   },
   {
     id: 15,
-    name: "Application O",
-    appName: "Application O",
+    name: "CartOwl",
+    appName: "CartOwl",
     dependencies: [
-      { id: "Q", name: "Application Q" },
-      { id: "R", name: "Application R" },
-      { id: "Kafka", name: "Kafka Queue" }
+      { id: "Redis", name: "Redis Cache" },
+      { id: "Kafka", name: "Kafka Queue" },
+      { id: "11", name: "ShopVerse Gateway" },
+      { id: "20", name: "CloudCore" }
     ],
     dependents: [
-      { id: "L", name: "Application L" },
-      { id: "M", name: "Application M" }
-    ]
+      { id: "11", name: "ShopVerse Gateway" }
+    ],
+    platform: {
+      type: "Linux Servers",
+      hostnames: ["linux-cart-01"],
+      os: "CentOS 7"
+    }
   },
   {
     id: 16,
-    name: "Application P",
-    appName: "Application P",
+    name: "Payments Prime",
+    appName: "Payments Prime",
     dependencies: [
-      { id: "S", name: "Application S" },
-      { id: "ExtAPI", name: "External API" }
+      { id: "Stripe", name: "Stripe API" },
+      { id: "20", name: "CloudCore" }
     ],
     dependents: [
-      { id: "N", name: "Application N" }
-    ]
+      { id: "11", name: "ShopVerse Gateway" }
+    ],
+    platform: {
+      type: "Windows Servers",
+      hostnames: ["win-pay-01", "win-pay-02"],
+      os: "Windows Server 2016"
+    }
   },
   {
     id: 17,
-    name: "Application Q",
-    appName: "Application Q",
+    name: "Fulfillment Hub",
+    appName: "Fulfillment Hub",
     dependencies: [
-      { id: "S", name: "Application S" },
-      { id: "T", name: "Application T" },
-      { id: "DB", name: "Database" }
+      { id: "PostgreSQL", name: "PostgreSQL DB" },
+      { id: "20", name: "CloudCore" }
     ],
     dependents: [
-      { id: "N", name: "Application N" },
-      { id: "O", name: "Application O" }
-    ]
+      { id: "11", name: "ShopVerse Gateway" }
+    ],
+    platform: {
+      type: "PCF",
+      namespace: "fulfill-pcf-ns",
+      hosts: ["pcf-ful-01", "pcf-ful-02"]
+    }
   },
   {
     id: 18,
-    name: "Application R",
-    appName: "Application R",
+    name: "Insight Dashboard",
+    appName: "Insight Dashboard",
     dependencies: [
-      { id: "T", name: "Application T" },
-      { id: "Cache", name: "Cache" }
+      { id: "Grafana", name: "Grafana Dashboard" },
+      { id: "Prometheus", name: "Prometheus Metrics" },
+      { id: "Elasticsearch", name: "Elasticsearch Logging" },
+      { id: "Kibana", name: "Kibana Visualization" }
     ],
-    dependents: [
-      { id: "O", name: "Application O" }
-    ]
+    dependents: [],
+    platform: {
+      type: "Kubernetes",
+      namespace: "dashboard-ns",
+      hosts: ["k8s-dash-01", "k8s-dash-02"]
+    }
   },
   {
     id: 19,
-    name: "Application S",
-    appName: "Application S",
+    name: "NotifyMe",
+    appName: "NotifyMe",
     dependencies: [
-      { id: "A", name: "Application A" },
-      { id: "ExtAPI", name: "External API" }
+      { id: "Twilio", name: "Twilio SMS" },
+      { id: "FCM", name: "Firebase Cloud Messaging" },
+      { id: "AWS Lambda", name: "AWS Lambda" },
+      { id: "20", name: "CloudCore" }
     ],
     dependents: [
-      { id: "P", name: "Application P" },
-      { id: "Q", name: "Application Q" }
-    ]
+      { id: "11", name: "ShopVerse Gateway" }
+    ],
+    platform: {
+      type: "Kubernetes",
+      namespace: "notify-ns",
+      hosts: ["k8s-notify-01"]
+    }
   },
   {
     id: 20,
-    name: "Application T",
-    appName: "Application T",
+    name: "CloudCore",
+    appName: "CloudCore",
     dependencies: [
-      { id: "A", name: "Application A" },
-      { id: "Kafka", name: "Kafka Queue" }
+      { id: "Docker", name: "Docker" },
+      { id: "Kubernetes", name: "Kubernetes" },
+      { id: "GCR", name: "Google Cloud Run" },
+      { id: "AWS Lambda", name: "AWS Lambda" },
+      { id: "Terraform", name: "Terraform" }
     ],
     dependents: [
-      { id: "Q", name: "Application Q" },
-      { id: "R", name: "Application R" }
-    ]
+      { id: "10", name: "ShopVerse Frontend" },
+      { id: "11", name: "ShopVerse Gateway" },
+      { id: "12", name: "Catalog Explorer" },
+      { id: "13", name: "SmartSuggest" },
+      { id: "14", name: "Account Nexus" },
+      { id: "15", name: "CartOwl" },
+      { id: "16", name: "Payments Prime" },
+      { id: "17", name: "Fulfillment Hub" },
+      { id: "19", name: "NotifyMe" }
+    ],
+    platform: {
+      type: "Kubernetes",
+      namespace: "cloudcore-ns",
+      hosts: ["k8s-core-01", "k8s-core-02", "k8s-core-03"]
+    }
   }
 ];

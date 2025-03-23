@@ -4,8 +4,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { incidents } from '../data';
 import DependencyGraph from './DependencyGraph';
 import ChatbotWidget from './ChatbotWidget';
+import LogDisplay from "./LogDisplay";
 
 const IncidentDetails = () => {
+  
   const { incidentId } = useParams();
   const navigate = useNavigate();
   const incident = incidents.find((inc) => inc.id.toString() === incidentId);
@@ -30,7 +32,10 @@ const IncidentDetails = () => {
         &larr; Back to Home
       </button>
       <h1>{incident.name}</h1>
+      <h2>Incident ID: {incident.id}</h2>
       <h2>Application: {incident.appName}</h2>
+      <hr />
+      <LogDisplay />
       <h3>Dependency Graph</h3>
       <DependencyGraph
         appName={incident.appName}

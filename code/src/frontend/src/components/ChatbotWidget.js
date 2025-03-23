@@ -112,7 +112,7 @@ Based on these details, provide troubleshooting advice and suggest corrective ac
           whiteSpace: "nowrap"
         }}
       >
-        {collapsed ? "Chat" : "Troubleshoot"}
+        {collapsed ? "Assist" : "Troubleshoot"}
       </div>
 
       {/* Chat window: Rendered only when expanded */}
