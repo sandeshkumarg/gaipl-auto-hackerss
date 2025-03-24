@@ -23,6 +23,7 @@ load_dotenv()
 # Initialize FastAPI app
 app = FastAPI()
 
+
 # Enable CORS so that your frontend can call this API.
 app.add_middleware(
     CORSMiddleware,
@@ -42,7 +43,7 @@ if GEMINI_API_KEY is None:
 # Expect the client to send a JSON payload containing a list of messages.
 class ChatRequest(BaseModel):
     messages: list  # Each message is typically a dict with keys "role" and "content"
-    logs: str
+    logs: list
     dependencies: str
 
 
