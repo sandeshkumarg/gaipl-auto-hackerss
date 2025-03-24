@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
-import openai
+from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Load OpenAI API key from environment variable
+api_key = os.getenv("OPENAI_API_KEY")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 if not openai.api_key:
     raise ValueError("The OPENAI_API_KEY environment variable is not set.")
@@ -37,6 +38,7 @@ async def create_completion(request: Request):
             prompt=prompt,
             max_tokens=100,
             temperature=0.7,
+            
         )
         # Extract and clean the text response from OpenAI
         completion_text = response.choices[0].text.strip()
