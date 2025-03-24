@@ -23,6 +23,7 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
     }
   }, [messages, collapsed]);
 
+  
   // Function to send the user input along with system context
   // to your FastAPI endpoint which handles the call to OpenAI.
   const handleSend = async () => {
@@ -43,7 +44,7 @@ System Dependencies: ${systemDependencies || "None provided"}
 System Logs: ${systemLogs || "No logs available"}
 Based on these details, provide troubleshooting advice and suggest corrective actions.`
       },*/
-      { role: "user", content: trimmedInput }
+      { role: "user", content: trimmedInput}
     ];
 
     try {
@@ -53,7 +54,7 @@ Based on these details, provide troubleshooting advice and suggest corrective ac
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ messages: messagesForBackend })
+        body: JSON.stringify({ messages: messagesForBackend, logs: systemLogs, dependencies: systemDependencies })
       });
 
       const data = await response.json();

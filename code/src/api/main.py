@@ -7,6 +7,7 @@ import os
 from google import genai
 from google.genai import types
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.prompts import ChatPromptTemplate
 
 import os
 import requests
@@ -36,6 +37,9 @@ if GEMINI_API_KEY is None:
 # Expect the client to send a JSON payload containing a list of messages.
 class ChatRequest(BaseModel):
     messages: list  # Each message is typically a dict with keys "role" and "content"
+    logs: str
+    dependencies: str
+
 
 def transform(request):
     contents = [(msg["role"], msg["content"])
@@ -51,6 +55,16 @@ async def chat_endpoint(request: ChatRequest):
     and returns the assistant’s reply.
     """
 
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a System Troubleshooter who knows how to identify issues related to Distributed Systems, Microservices, Kafka, Databases such as Oracle, Mongo, SQL Server, Redis and other technologies available. The user will provide the System architecture and the architecture details would contain the dependent systems and also the dependencies for the given system. The user also will provide system logs containing errors. Based on the details provided, provide troubleshooting steps and suggest corrective actions to be taken to resolve the issue. Feel free to ask further information as needed for incident resolution. Keep the instructions short to less than a paragraph so the user can resolve the issue faster. Try to limit the response to 100 words or less when possible. Goal is to resolve the error as soon as possible with least manual steps. The logs are {logs} and the system dependencies {dependencies}",
+            ),
+            ("user", "{input}"),
+        ]
+    )
+
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
                              temperature=0.7,
             max_tokens=None,
@@ -61,10 +75,24 @@ async def chat_endpoint(request: ChatRequest):
     
     try:
 
-        chats = transform(request)
-        result = llm.invoke(chats)
+        print(request)
 
-        print(result)
+        logs = request.logs
+        deps = request.dependencies
+
+        chats = transform(request)
+        #result = llm.invoke(chats)
+
+        chain = prompt | llm
+        result = chain.invoke(
+            {
+                "logs": logs,
+                "dependencies": deps,
+                "input": chats,
+            }
+        )
+
+        print(result.content)
         return {"reply": result.content}
     
     except Exception as e:
