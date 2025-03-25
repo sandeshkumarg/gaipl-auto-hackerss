@@ -17,7 +17,7 @@ const IncidentDetails = () => {
     return (
       <div>
         <h2>Incident not found</h2>
-        <button onClick={() => navigate('/')}>Back to Home</button>
+        <button onClick={() => navigate('/incident')}>Back to Incidents</button>
       </div>
     );
   }
@@ -92,8 +92,8 @@ const IncidentDetails = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <button onClick={() => navigate('/')} style={{ marginBottom: '20px' }}>
-        &larr; Back to Home
+      <button onClick={() => navigate('/incident')} style={{ marginBottom: '20px' }}>
+        &larr; Back to Incidents
       </button>
       <h1>{incident.name}</h1>
       <h2>Incident ID: {incident.id}</h2>

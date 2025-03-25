@@ -2,7 +2,7 @@ import React from 'react';
 import { incidents } from '../data';
 import { useNavigate } from 'react-router-dom';
 
-const HomePage = () => {
+const IncidentDashboard = () => {
   const navigate = useNavigate();
 
   const handleIncidentClick = (id) => {
@@ -10,7 +10,7 @@ const HomePage = () => {
   };
 
   return (
-    <div>
+    <div style={{ padding: '100px' }}>
       <h1>Active Incidents</h1>
       {incidents.length === 0 ? (
         <p>No active incidents</p>
@@ -31,4 +31,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default IncidentDashboard;
