@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import IncidentDashboard from './components/IncidentDashboard';
 import IncidentDetails from './components/IncidentDetails';
 import Dashboard from './components/Dashboard';
 import Sidebar from './components/Sidebar';
 import ChatbotWidget from './components/ChatbotWidget';
 import Monitoring from './components/Monitoring';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ConfigManagement from './components/ConfigManagement';
 import Reporting from './components/Reporting';
 import Automation from './components/Automation';
@@ -14,11 +14,15 @@ import Header from './components/Header';
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [iconColor, setIconColor] = useState('black');
+  const location = useLocation();
 
   const handleMenuClick = () => {
     setIsSidebarOpen(!isSidebarOpen);
     setIconColor(isSidebarOpen ? '#a1c4fd' : 'black'); // Toggle icon color
   };
+
+  const isIncidentDetailsPage = location.pathname.startsWith('/incident/');
+
   return (
     <div className={`main-content ${isSidebarOpen ? 'expanded' : 'collapsed'}`}>
       <Header onMenuClick={handleMenuClick} iconColor={iconColor} />
@@ -33,10 +37,8 @@ const App = () => {
             <Route path="/reporting" element={<Reporting />} />
             <Route path="/automation" element={<Automation />} />
             <Route path="/config-management" element={<ConfigManagement />} />
-
           </Routes>
-        </div>
-        <ChatbotWidget systemDependencies="Sample Dependencies" systemLogs="Sample Logs" />
+        </div>       
       </div>
     </div>
   );

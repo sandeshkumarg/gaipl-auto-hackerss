@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
   const [collapsed, setCollapsed] = useState(true);
@@ -10,6 +11,7 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
   ]);
   const [userInput, setUserInput] = useState('');
   const messagesEndRef = useRef(null);
+  const chatID = useRef(uuidv4());
 
   const toggleCollapsed = () => setCollapsed(!collapsed);
 
@@ -37,7 +39,7 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ messages: messagesForBackend, logs: systemLogs, dependencies: systemDependencies })
+        body: JSON.stringify({ chatID: chatID.current, messages: messagesForBackend, logs: systemLogs, dependencies: systemDependencies })
       });
 
       const data = await response.json();
