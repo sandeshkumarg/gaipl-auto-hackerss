@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Grid, Paper, Typography, Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import AutomationChatbotWidget from './AutomationChatbotWidget';
 
 const Automation = () => {
   const [open, setOpen] = useState(false);
@@ -111,6 +112,7 @@ const Automation = () => {
         </Grid>
       </Grid>
       {/* Add Task Dialog */}
+      <AutomationChatbotWidget />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add Task</DialogTitle>
         <DialogContent>
@@ -143,6 +145,8 @@ const Automation = () => {
         </DialogActions>
       </Dialog>
     </Container>
+
+    
   );
 };
 

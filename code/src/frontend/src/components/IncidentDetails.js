@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { incidents } from '../data';
 import DependencyGraph from './DependencyGraph';
-import ChatbotWidget from './ChatbotWidget';
+import IncidentChatbotWidget from './IncidentChatbotWidget';
 import LogDisplay from "./LogDisplay";
 import axios from "axios"; // Using Axios for making API calls
 
@@ -107,7 +107,7 @@ const IncidentDetails = () => {
         dependents={incident.dependents}
       />
       {/* Provide system context to the ChatbotWidget */}
-      <ChatbotWidget systemDependencies={systemDependencies} systemLogs={systemLogs} />
+      <IncidentChatbotWidget systemDependencies={systemDependencies} systemLogs={systemLogs} />
     </div>
   );
 };

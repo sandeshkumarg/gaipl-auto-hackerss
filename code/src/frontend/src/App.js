@@ -4,7 +4,6 @@ import IncidentDashboard from './components/IncidentDashboard';
 import IncidentDetails from './components/IncidentDetails';
 import Dashboard from './components/Dashboard';
 import Sidebar from './components/Sidebar';
-import ChatbotWidget from './components/ChatbotWidget';
 import Monitoring from './components/Monitoring';
 import ConfigManagement from './components/ConfigManagement';
 import Reporting from './components/Reporting';

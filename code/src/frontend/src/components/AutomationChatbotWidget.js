@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
+const AutomationChatbotWidget = () => {
   const [collapsed, setCollapsed] = useState(true);
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: 'Hello! I am your troubleshooting assistant. How can I help you today?'
+      text: 'Hello! I am your automation assistant. How can I help you today?'
     }
   ]);
   const [userInput, setUserInput] = useState('');
@@ -34,12 +34,12 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
     ];
 
     try {
-      const response = await fetch("http://localhost:8000/chat", {
+      const response = await fetch("http://localhost:8000/automationchat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ chatID: chatID.current, messages: messagesForBackend, logs: systemLogs, dependencies: systemDependencies })
+        body: JSON.stringify({ chatID: chatID.current, messages: messagesForBackend })
       });
 
       const data = await response.json();
@@ -54,7 +54,7 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
       console.error("Error calling FastAPI:", error);
       setMessages((prev) => [
         ...prev,
-        { sender: 'bot', text: "Error: Unable to retrieve a response from our troubleshooting assistant." }
+        { sender: 'bot', text: "Error: Unable to retrieve a response from our automation assistant." }
       ]);
     }
   };
@@ -71,7 +71,7 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
         position: "fixed",
         bottom: "20px",
         right: "20px",
-        width: collapsed ? "100px" : "350px",
+        width: collapsed ? "200px" : "350px",
         height: collapsed ? "60px" : "450px",
         boxShadow: "0 0 10px rgba(0,0,0,0.3)",
         borderRadius: "10px",
@@ -97,7 +97,7 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
           justifyContent: "center"
         }}
       >
-        {collapsed ? "Chat Bot" : "Troubleshoot Assistant"}
+        {collapsed ? "Automation ChatBot" : "Automation Assistant"}
       </div>
 
       {!collapsed && (
@@ -169,4 +169,4 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
   );
 };
 
-export default ChatbotWidget;
+export default AutomationChatbotWidget;

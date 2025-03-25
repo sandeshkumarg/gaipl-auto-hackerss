@@ -11,6 +11,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta
 import json
+import random
 
 
 
@@ -46,9 +47,11 @@ class ChatRequest(BaseModel):
     logs: list
     dependencies: str
 
+class AutomationChatRequest(BaseModel):
+    messages: list  # Each message is typically a dict with keys "role" and "content"    
+
 class RunBookRequest(BaseModel):
     dependencies: str
-
 
 class LogsRequest(BaseModel):
     name: str  # Each message is typically a dict with keys "role" and "content"
@@ -84,8 +87,8 @@ def clean_and_parse_json(llm_response):
         return None
 
 
-@app.post("/chat")
-async def chat_endpoint(request: ChatRequest):
+@app.post("/incidentchat")
+async def incidentchat_endpoint(request: ChatRequest):
     """
     Receives a conversation (as a list of messages), calls Google Gemini Chat API,
     and returns the assistant’s reply.
@@ -135,6 +138,66 @@ async def chat_endpoint(request: ChatRequest):
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/automationchat")
+async def automationchat_endpoint(request: AutomationChatRequest):
+    """
+    Receives a conversation (as a list of messages), processes the command if detected,
+    and returns the execution result (success or failure) or a general response.
+    """
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are an MCP (Master Control Program) automation executor. Your role is to understand and execute automation commands provided by the user. For each command received, you will process it and provide an appropriate response indicating whether the execution was successful or failed. The success or failure of the execution should be determined randomly to simulate real-world scenarios. Ensure that your responses are clear and concise, providing any necessary details about the execution outcome. If the input is a general message, respond accordingly without indicating success or failure.",
+            ),
+            ("user", "{input}"),
+        ]
+    )
+
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+                                 temperature=0.7,
+                                 max_tokens=None,
+                                 timeout=None,
+                                 max_retries=2,
+                                 # other params...
+                                 )
+
+    try:
+        print(request)
+
+        chats = transform(request)
+        user_message = request.messages[-1]["content"].strip().lower()
+
+        # Check if the message is a command
+        is_command = any(keyword in user_message for keyword in ["execute", "run", "start", "stop", "deploy"])
+
+        if is_command:
+            # Simulate command execution with random success or failure
+            execution_result = "success" if random.choice([True, False]) else "failed"
+            chain = prompt | llm
+            result = chain.invoke(
+                {
+                    "input": chats,
+                }
+            )
+            response_content = f"Command execution {execution_result}: {result.content}"
+        else:
+            # Handle general messages
+            chain = prompt | llm
+            result = chain.invoke(
+                {
+                    "input": chats,
+                }
+            )
+            response_content = result.content
+
+        print(response_content)
+        return {"reply": response_content}
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/logs")
 async def logs_endpoint(request: LogsRequest):
