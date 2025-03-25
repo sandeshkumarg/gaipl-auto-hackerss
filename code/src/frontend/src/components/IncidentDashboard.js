@@ -1,12 +1,13 @@
 import React from 'react';
 import { incidents } from '../data';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const IncidentDashboard = () => {
   const navigate = useNavigate();
+  const { status } = useParams();
 
   const handleIncidentClick = (id) => {
-    navigate(`/incident/${id}`);
+    navigate(`/incidentdetails/${id}`);
   };
 
   const getStatusColor = (status) => {
@@ -22,14 +23,18 @@ const IncidentDashboard = () => {
     }
   };
 
+  const filteredIncidents = status === 'all' || status === undefined
+    ? incidents
+    : incidents.filter((incident) => incident.status === status);
+
   return (
     <div style={{ padding: '100px' }}>
       <h1>Active Incidents</h1>
-      {incidents.length === 0 ? (
+      {filteredIncidents.length === 0 ? (
         <p>No active incidents</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {incidents.map((incident) => (
+          {filteredIncidents.map((incident) => (
             <div
               key={incident.id}
               className="incident-card"

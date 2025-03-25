@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Grid, Paper, Typography, Card, CardContent } from '@mui/material';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import { useNavigate } from 'react-router-dom';
+import { incidents } from '../data';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -31,9 +32,18 @@ ChartJS.register(
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const handleCardClick = () => {
-    navigate('/incident-details');
+  const handleCardClick = (status) => {
+    if (status === '')
+      navigate(`/incident/all`);
+    else
+      navigate(`/incident/${status}`);
   };
+
+  // Calculate incident counts based on status
+  const resolvedCount = incidents.filter(incident => incident.status === 'closed').length;
+  const loggedCount = incidents.length;
+  const inProgressCount = incidents.filter(incident => incident.status === 'inprogress').length;
+  const openCount = incidents.filter(incident => incident.status === 'open').length;
 
   const incidentsResolvedData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -104,33 +114,59 @@ const Dashboard = () => {
       <Grid container spacing={3}>
         {/* Number of Incidents Resolved */}
         <Grid item xs={12} md={6} lg={4}>
-          <Card onClick={handleCardClick} style={{ cursor: 'pointer' }}>
+          <Card onClick={() => handleCardClick('closed')} style={{ cursor: 'pointer' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Incidents Resolved
               </Typography>
               <Typography variant="h4">
-                120
+                {resolvedCount}
               </Typography>
             </CardContent>
           </Card>
         </Grid>
         {/* Number of Incidents Logged */}
         <Grid item xs={12} md={6} lg={4}>
-          <Card>
+          <Card onClick={() => handleCardClick('all')} style={{ cursor: 'pointer' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Incidents Logged
               </Typography>
               <Typography variant="h4">
-                150
+                {loggedCount}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        {/* Number of Incidents In Progress */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Card onClick={() => handleCardClick('inprogress')} style={{ cursor: 'pointer' }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Incidents In Progress
+              </Typography>
+              <Typography variant="h4">
+                {inProgressCount}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        {/* Number of Open Incidents */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Card onClick={() => handleCardClick('open')} style={{ cursor: 'pointer' }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Open Incidents
+              </Typography>
+              <Typography variant="h4">
+                {openCount}
               </Typography>
             </CardContent>
           </Card>
         </Grid>
         {/* Incidents Resolved in Graph */}
         <Grid item xs={12} md={6} lg={4}>
-          <Paper style={{  height: '100%' }}>
+          <Paper style={{ height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Incidents Resolved
             </Typography>
@@ -141,7 +177,7 @@ const Dashboard = () => {
         </Grid>
         {/* Incidents Logged in Graph */}
         <Grid item xs={12} md={6} lg={4}>
-          <Paper style={{  height: '100%' }}>
+          <Paper style={{ height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Incidents Logged
             </Typography>
@@ -152,7 +188,7 @@ const Dashboard = () => {
         </Grid>
         {/* Average MTTR for each Incident */}
         <Grid item xs={12} md={6} lg={4}>
-          <Paper style={{  height: '100%' }}>
+          <Paper style={{ height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Average MTTR
             </Typography>
@@ -163,7 +199,7 @@ const Dashboard = () => {
         </Grid>
         {/* Incidents with Top 3 Severity */}
         <Grid item xs={12} md={6} lg={4}>
-          <Paper style={{  height: '100%' }}>
+          <Paper style={{ height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Top 3 Severity Incidents
             </Typography>

@@ -149,7 +149,7 @@ async def automationchat_endpoint(request: AutomationChatRequest):
         [
             (
                 "system",
-                "You are an MCP (Master Control Program) automation executor. Your role is to understand and execute automation commands provided by the user. For each command received, you will process it and provide an appropriate response indicating whether the execution was successful or failed. The success or failure of the execution should be determined randomly to simulate real-world scenarios. Ensure that your responses are clear and concise, providing any necessary details about the execution outcome. If the input is a general message, respond accordingly without indicating success or failure.",
+                "You are an MCP (Master Control Program) automation executor. Your role is to understand and execute automation commands provided by the user. For each command received, you will process it and provide an appropriate response based on the command being passed indicating whether the execution was successful or failed and appropriate logs based on the command. The success or failure of the execution should be determined randomly to simulate real-world scenarios. Ensure that your responses are clear and concise, providing any necessary details about the execution outcome. If the input is a general message, respond accordingly without indicating success or failure.",
             ),
             ("user", "{input}"),
         ]
@@ -173,15 +173,13 @@ async def automationchat_endpoint(request: AutomationChatRequest):
         is_command = any(keyword in user_message for keyword in ["execute", "run", "start", "stop", "deploy"])
 
         if is_command:
-            # Simulate command execution with random success or failure
-            execution_result = "success" if random.choice([True, False]) else "failed"
             chain = prompt | llm
             result = chain.invoke(
                 {
                     "input": chats,
                 }
             )
-            response_content = f"Command execution {execution_result}: {result.content}"
+            response_content = f"{result.content}"
         else:
             # Handle general messages
             chain = prompt | llm
