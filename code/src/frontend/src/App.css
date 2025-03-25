@@ -65,3 +65,11 @@ body {
 .main-content.expanded {
   margin-left: 240px; /* Width of the sidebar */
 }
+
+.selected {
+  background-color: #2a2a40 !important; /* Highlight color */
+}
+
+.selected:hover {
+  background-color: #2a2a40 !important; /* Same highlight color on hover */
+}
