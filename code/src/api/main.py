@@ -201,7 +201,22 @@ async def logs_endpoint(request: LogsRequest):
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
-
+@app.get("/splunk/logs")
+async def splunk_logs():
+    
+    #read the logs from specific folder , the folder is specific in env variable
+    #return the json logs as jsonresponse
+    try:
+        
+        logs = []
+        for filename in os.listdir('logs'):
+            with open(f'logs/{filename}', 'r') as file:
+                logs = json.load(file)
+        return JSONResponse(content=logs)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 @app.post("/systems")
 async def systems_endpoint(request: SystemsRequest):

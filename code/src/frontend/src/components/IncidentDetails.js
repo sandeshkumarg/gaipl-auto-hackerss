@@ -61,15 +61,17 @@ const IncidentDetails = () => {
 
       try {
         // Example API URL; adjust this according to your API endpoint.
-        const apiUrl = "http://localhost:8000/logs";
+        const apiUrl = "http://localhost:8000/splunk/logs";
 
-        const response = await axios.post(apiUrl, {
+        const response = await axios.get(apiUrl);
+
+        /*const response = await axios.post(apiUrl, {
             name: name,
             platform: platform,
             deps: dependencies, // Assume dependencies is an array.
             start: startTime,
             end: endTime,
-        });
+        });*/
 
         // Update the state with the fetched logs.
         setSystemLogs(response.data);
