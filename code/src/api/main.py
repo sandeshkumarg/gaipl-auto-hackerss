@@ -46,6 +46,9 @@ class ChatRequest(BaseModel):
     logs: list
     dependencies: str
 
+class RunBookRequest(BaseModel):
+    dependencies: str
+
 
 class LogsRequest(BaseModel):
     name: str  # Each message is typically a dict with keys "role" and "content"
@@ -251,7 +254,49 @@ async def systems_endpoint(request: SystemsRequest):
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/runbooks")
+async def runBook_endpoint(request: RunBookRequest):
+    """
+    Receives a conversation (as a list of messages), calls Google Gemini Chat API,
+    and returns the assistant’s reply.
+    """
 
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "Please provide a detailed runbook for a component based on the {dependencies}. The runbook should include the following information: 1. Component Information: - Component Name: The name of the component. - Component Description: A brief description of the component and its functionality. 2. Dependencies: - Upstream Dependencies: List of components or services that this component depends on. - Downstream Dependencies: List of components or services that depend on this component. 3. Logs and Monitoring: - Logs to Monitor: List of logs that need to be monitored for this component. - Log File Path: Path to the log file. - Log Level: The level of logs to monitor (e.g., ERROR, WARN, INFO). - Alerting Criteria: Criteria for triggering alerts based on log entries. 4. Alert Information: - Alert Name: Name of the alert. - Alert Description: Description of the alert and its significance. - Alert Severity: Severity level of the alert (e.g., Critical, High, Medium, Low). 5. Troubleshooting Steps: - Step 1: Description of the first troubleshooting step. - Step 2: Description of the second troubleshooting step. - Step 3: Description of the third troubleshooting step. - ...: Additional steps as needed. 6. Platform Information: - Platform Name: Name of the platform. - Platform Version: Version of the platform. - Platform Description: Description of the platform and its purpose. 7. System Information: - System Name: Name of the system. - System Version: Version of the system. - System Description: Description of the system and its purpose. - System Health: Current health status of the system (e.g., Healthy, Degraded, Unhealthy)"
+            ),
+            ("user", "Generate runbook logs"),
+        ]
+    )
+
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+                             temperature=0.7,
+            max_tokens=None,
+            timeout=None,
+            max_retries=2,
+            # other params...
+        )
+    
+    try:
+
+        print(request)
+
+        chain = prompt | llm
+        result = chain.invoke(
+            {
+                "dependencies": request.dependencies
+            }
+        )
+
+        print(result.content)
+        return {"reply": result.content}
+    
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 
 if __name__ == "__main__":

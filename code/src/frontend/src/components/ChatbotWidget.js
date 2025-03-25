@@ -1,9 +1,7 @@
-// src/components/ChatbotWidget.js
 import React, { useState, useRef, useEffect } from 'react';
 
 const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
   const [collapsed, setCollapsed] = useState(true);
-  // This chat history will now include both the user’s input and the bot’s responses.
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
@@ -13,42 +11,27 @@ const ChatbotWidget = ({ systemDependencies, systemLogs }) => {
   const [userInput, setUserInput] = useState('');
   const messagesEndRef = useRef(null);
 
-  // Toggle the widget's collapsed/expanded state.
   const toggleCollapsed = () => setCollapsed(!collapsed);
 
-  // Auto-scroll the chat window when messages are updated.
   useEffect(() => {
     if (!collapsed && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, collapsed]);
 
-  
-  // Function to send the user input along with system context
-  // to your FastAPI endpoint which handles the call to OpenAI.
   const handleSend = async () => {
     const trimmedInput = userInput.trim();
     if (!trimmedInput) return;
-    
-    // Add the user's message to the visible chat history.
+
     const userMessage = { sender: 'user', text: trimmedInput };
     setMessages((prev) => [...prev, userMessage]);
     setUserInput('');
 
-    // Build the conversation context that includes system dependencies and logs.
     const messagesForBackend = [
-      /*{
-        role: "system",
-        content: `You are a troubleshooting assistant with expertise in analyzing system dependencies and system logs.
-System Dependencies: ${systemDependencies || "None provided"}
-System Logs: ${systemLogs || "No logs available"}
-Based on these details, provide troubleshooting advice and suggest corrective actions.`
-      },*/
-      { role: "user", content: trimmedInput}
+      { role: "user", content: trimmedInput }
     ];
 
     try {
-      // Call the FastAPI endpoint that wraps the OpenAI API call.
       const response = await fetch("http://localhost:8000/chat", {
         method: "POST",
         headers: {
@@ -59,13 +42,11 @@ Based on these details, provide troubleshooting advice and suggest corrective ac
 
       const data = await response.json();
       let botReply = "";
-      // Assuming your FastAPI returns a JSON like { reply: "..." }
       if (data && data.reply) {
         botReply = data.reply;
       } else {
         botReply = "I'm sorry, I couldn't process your request.";
       }
-      // Append the bot's reply to the chat.
       setMessages((prev) => [...prev, { sender: 'bot', text: botReply }]);
     } catch (error) {
       console.error("Error calling FastAPI:", error);
@@ -76,7 +57,6 @@ Based on these details, provide troubleshooting advice and suggest corrective ac
     }
   };
 
-  // Allow sending messages on Enter key press.
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleSend();
@@ -89,7 +69,7 @@ Based on these details, provide troubleshooting advice and suggest corrective ac
         position: "fixed",
         bottom: "20px",
         right: "20px",
-        width: collapsed ? "60px" : "350px",
+        width: collapsed ? "100px" : "350px",
         height: collapsed ? "60px" : "450px",
         boxShadow: "0 0 10px rgba(0,0,0,0.3)",
         borderRadius: "10px",
@@ -99,7 +79,6 @@ Based on these details, provide troubleshooting advice and suggest corrective ac
         overflow: "hidden"
       }}
     >
-      {/* Widget header: Click it to expand/collapse */}
       <div
         onClick={toggleCollapsed}
         style={{
@@ -110,13 +89,15 @@ Based on these details, provide troubleshooting advice and suggest corrective ac
           cursor: "pointer",
           textAlign: "center",
           fontSize: "16px",
-          whiteSpace: "nowrap"
+          whiteSpace: "nowrap",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}
       >
         {collapsed ? "Chat Bot" : "Troubleshoot Assistant"}
       </div>
 
-      {/* Chat window: Rendered only when expanded */}
       {!collapsed && (
         <div style={{ display: "flex", flexDirection: "column", height: "calc(100% - 40px)" }}>
           <div
