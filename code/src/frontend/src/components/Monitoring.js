@@ -12,6 +12,7 @@ import {
   Legend,
   PointElement
 } from 'chart.js';
+import MonitoringChatbotWidget from './MonitoringChatbotWidget';
 
 // Register the necessary components
 ChartJS.register(
@@ -204,6 +205,7 @@ const Monitoring = () => {
         </Grid>
         {/* Add more widgets as needed */}
       </Grid>
+      <MonitoringChatbotWidget />
     </Container>
   );
 };

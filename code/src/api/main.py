@@ -45,6 +45,12 @@ class ReportingChatRequest(BaseModel):
     messages: list  # Each message is typically a dict with keys "role" and "content"
     incidents: list  # Incident details
 
+class MonitoringChatRequest(BaseModel):
+    messages: list  # Each message is typically a dict with keys "role" and "content"
+
+class ConfigManagementChatRequest(BaseModel):
+    messages: list  # Each message is typically a dict with keys "role" and "content"
+
 class RunBookRequest(BaseModel):
     dependencies: str
 
@@ -236,6 +242,97 @@ async def reportingchat_endpoint(request: ReportingChatRequest):
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/monitoringchat")
+async def monitoringchat_endpoint(request: MonitoringChatRequest):
+    """
+    Receives a conversation (as a list of messages), processes the request,
+    and returns an appropriate response based on the data available.
+    """
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a monitoring chatbot helper. Your role is to analyze the underlying infrastructure of Kubernetes, databases, CPU, space, request throttling, memory usage, etc. Respond to the queries assuming relevant data and display the response back accordingly.",
+            ),
+            ("user", "{input}"),
+        ]
+    )
+
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+                                 temperature=0.7,
+                                 max_tokens=None,
+                                 timeout=None,
+                                 max_retries=2,
+                                 # other params...
+                                 )
+
+    try:
+        print(request)
+
+        chats = transform(request)
+
+        chain = prompt | llm
+        result = chain.invoke(
+            {
+                "input": chats,
+            }
+        )
+
+        response_content = result.content
+        print(response_content)
+        return {"reply": response_content}
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/configManagementchat")
+async def config_management_chat_endpoint(request: ConfigManagementChatRequest):
+    """
+    Receives a conversation (as a list of messages), processes the request,
+    and returns an appropriate response based on the data available.
+    """
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a Configuration and Change Management Assistant designed to assist software and infrastructure industries by automating configuration tracking, change request workflows, impact analysis, deployment, monitoring, compliance, and reporting while ensuring efficiency, accuracy, and actionable responses tailored to user queries based on retrieved RAG data.",
+            ),
+            ("user", "{input}"),
+        ]
+    )
+
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+                                 temperature=0.7,
+                                 max_tokens=None,
+                                 timeout=None,
+                                 max_retries=2,
+                                 # other params...
+                                 )
+
+    try:
+        print(request)
+
+        chats = transform(request)
+
+        chain = prompt | llm
+        result = chain.invoke(
+            {
+                "input": chats,
+            }
+        )
+
+        response_content = result.content
+        print(response_content)
+        return {"reply": response_content}
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    
 @app.post("/logs")
 async def logs_endpoint(request: LogsRequest):
     """

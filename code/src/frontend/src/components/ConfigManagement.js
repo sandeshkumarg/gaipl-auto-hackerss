@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Grid, Paper, Typography, Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import ConfigManagementChatbotWidget from './ConfigManagementChatbotWidget';
 
 const ConfigManagement = () => {
   const [open, setOpen] = useState(false);
@@ -75,6 +76,7 @@ const ConfigManagement = () => {
         </Grid>
       </Grid>
       {/* Add Configuration Dialog */}
+      <ConfigManagementChatbotWidget />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add Configuration</DialogTitle>
         <DialogContent>
