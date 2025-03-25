@@ -11,19 +11,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta
 import json
-import random
-
-
-
-import os
-import requests
 
 load_dotenv()
 
-
 # Initialize FastAPI app
 app = FastAPI()
-
 
 # Enable CORS so that your frontend can call this API.
 app.add_middleware(
@@ -39,7 +31,6 @@ GEMINI_API_KEY = os.getenv("GOOGLE_GEMINI_API_KEY")
 if GEMINI_API_KEY is None:
     raise ValueError("GOOGLE_GEMINI_API_KEY environment variable is not set.")
 
-
 # Define the input model using Pydantic.
 # Expect the client to send a JSON payload containing a list of messages.
 class ChatRequest(BaseModel):
@@ -48,7 +39,11 @@ class ChatRequest(BaseModel):
     dependencies: str
 
 class AutomationChatRequest(BaseModel):
-    messages: list  # Each message is typically a dict with keys "role" and "content"    
+    messages: list  # Each message is typically a dict with keys "role" and "content"
+
+class ReportingChatRequest(BaseModel):
+    messages: list  # Each message is typically a dict with keys "role" and "content"
+    incidents: list  # Incident details
 
 class RunBookRequest(BaseModel):
     dependencies: str
@@ -73,7 +68,6 @@ def transform(request):
     print(contents)
     return contents
 
-
 def clean_and_parse_json(llm_response):
     # Remove the formatting markers like ```json and ```
     cleaned_response = llm_response.strip('```json').strip('```').strip()
@@ -85,7 +79,6 @@ def clean_and_parse_json(llm_response):
     except json.JSONDecodeError as e:
         print("Failed to parse JSON:", e)
         return None
-
 
 @app.post("/incidentchat")
 async def incidentchat_endpoint(request: ChatRequest):
@@ -105,15 +98,14 @@ async def incidentchat_endpoint(request: ChatRequest):
     )
 
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
-                             temperature=0.7,
-            max_tokens=None,
-            timeout=None,
-            max_retries=2,
-            # other params...
-        )
-    
-    try:
+                                 temperature=0.7,
+                                 max_tokens=None,
+                                 timeout=None,
+                                 max_retries=2,
+                                 # other params...
+                                 )
 
+    try:
         print(request)
 
         logs = request.logs
@@ -133,7 +125,7 @@ async def incidentchat_endpoint(request: ChatRequest):
 
         print(result.content)
         return {"reply": result.content}
-    
+
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -197,6 +189,53 @@ async def automationchat_endpoint(request: AutomationChatRequest):
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/reportingchat")
+async def reportingchat_endpoint(request: ReportingChatRequest):
+    """
+    Receives a conversation (as a list of messages) and an incident, processes the request,
+    and returns an appropriate response based on the data available.
+    """
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a reporting chatbot helper. Your role is to analyze the incidents passed and respond to the queries based on the data available in the incidents. Understand the incoming message and process it to respond with an appropriate response based on the input.User can ask question on individual incident or get a summary of all incidents. The incidents are {incidents}",
+            ),
+            ("user", "{input}"),
+        ]
+    )
+
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+                                 temperature=0.7,
+                                 max_tokens=None,
+                                 timeout=None,
+                                 max_retries=2,
+                                 # other params...
+                                 )
+
+    try:
+        print(request)
+
+        chats = transform(request)
+        incidents = request.incidents
+
+        chain = prompt | llm
+        result = chain.invoke(
+            {
+                "input": chats,
+                "incidents": incidents,
+            }
+        )
+
+        response_content = result.content
+        print(response_content)
+        return {"reply": response_content}
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/logs")
 async def logs_endpoint(request: LogsRequest):
     """
@@ -215,18 +254,15 @@ async def logs_endpoint(request: LogsRequest):
     )
 
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
-                             temperature=0.7,
-            max_tokens=None,
-            timeout=None,
-            max_retries=2,
-            # other params...
-        )
-    
+                                 temperature=0.7,
+                                 max_tokens=None,
+                                 timeout=None,
+                                 max_retries=2,
+                                 # other params...
+                                 )
+
     try:
-
         print(request)
-
-        
 
         chain = prompt | llm
         result = chain.invoke(
@@ -245,7 +281,6 @@ async def logs_endpoint(request: LogsRequest):
 
         # Create a JSON response and set cache-control headers
         response = JSONResponse(content=parsed_json)
-        
 
         # Set Cache-Control header for 60 minutes
         response.headers["Cache-Control"] = "public, max-age=3600"
@@ -253,22 +288,16 @@ async def logs_endpoint(request: LogsRequest):
         expires = (datetime.utcnow() + timedelta(minutes=60)).strftime("%a, %d %b %Y %H:%M:%S GMT")
         response.headers["Expires"] = expires
 
-
         return response
-
-        return {"reply": result.content}
-    
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/splunk/logs")
 async def splunk_logs():
-    
     #read the logs from specific folder , the folder is specific in env variable
     #return the json logs as jsonresponse
     try:
-        
         logs = []
         for filename in os.listdir('logs'):
             with open(f'logs/{filename}', 'r') as file:
@@ -277,7 +306,6 @@ async def splunk_logs():
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-    
 
 @app.post("/systems")
 async def systems_endpoint(request: SystemsRequest):
@@ -297,15 +325,14 @@ async def systems_endpoint(request: SystemsRequest):
     )
 
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
-                             temperature=0.7,
-            max_tokens=None,
-            timeout=None,
-            max_retries=2,
-            # other params...
-        )
-    
-    try:
+                                 temperature=0.7,
+                                 max_tokens=None,
+                                 timeout=None,
+                                 max_retries=2,
+                                 # other params...
+                                 )
 
+    try:
         print(request)
 
         logs = request.logs
@@ -325,7 +352,7 @@ async def systems_endpoint(request: SystemsRequest):
 
         print(result.content)
         return {"reply": result.content}
-    
+
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
@@ -348,15 +375,14 @@ async def runBook_endpoint(request: RunBookRequest):
     )
 
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
-                             temperature=0.7,
-            max_tokens=None,
-            timeout=None,
-            max_retries=2,
-            # other params...
-        )
-    
-    try:
+                                 temperature=0.7,
+                                 max_tokens=None,
+                                 timeout=None,
+                                 max_retries=2,
+                                 # other params...
+                                 )
 
+    try:
         print(request)
 
         chain = prompt | llm
@@ -368,12 +394,10 @@ async def runBook_endpoint(request: RunBookRequest):
 
         print(result.content)
         return {"reply": result.content}
-    
+
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-    
-
 
 if __name__ == "__main__":
     import uvicorn

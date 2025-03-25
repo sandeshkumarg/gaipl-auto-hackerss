@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Container, Grid, Paper, Typography, Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { Bar, Line, Pie } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
   LineElement,
-  ArcElement,
   Title,
   Tooltip,
   Legend,
   PointElement
 } from 'chart.js';
+import ReportingChatbotWidget from './ReportingChatbotWidget';
+import { incidents } from '../data';
 
 // Register the necessary components
 ChartJS.register(
@@ -20,7 +21,6 @@ ChartJS.register(
   LinearScale,
   BarElement,
   LineElement,
-  ArcElement,
   Title,
   Tooltip,
   Legend,
@@ -154,6 +154,7 @@ const Reporting = () => {
         {/* Add more widgets as needed */}
       </Grid>
       {/* Generate Report Dialog */}
+      <ReportingChatbotWidget incidents={incidents} />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Generate Report</DialogTitle>
         <DialogContent>
