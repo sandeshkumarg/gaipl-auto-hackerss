@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { incidents } from '../data';
 import DependencyGraph from './DependencyGraph';
-import IncidentChatbotWidget from './IncidentChatbotWidget';
+import IncidentChatbotWidget from './chatbot/IncidentChatbotWidget';
 import LogDisplay from "./LogDisplay";
 import axios from "axios"; // Using Axios for making API calls
 

@@ -1,24 +1,26 @@
 import React from 'react';
 import { Container, Grid, Paper, Typography } from '@mui/material';
-import { Line, Doughnut } from 'react-chartjs-2';
+import { Line, Doughnut, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   LineElement,
+  BarElement,
   ArcElement,
   Title,
   Tooltip,
   Legend,
   PointElement
 } from 'chart.js';
-import MonitoringChatbotWidget from './MonitoringChatbotWidget';
+import MonitoringChatbotWidget from './chatbot/MonitoringChatbotWidget';
 
 // Register the necessary components
 ChartJS.register(
   CategoryScale,
   LinearScale,
   LineElement,
+  BarElement,
   ArcElement,
   Title,
   Tooltip,
@@ -132,6 +134,45 @@ const Monitoring = () => {
     ]
   };
 
+  const databasePerformanceData = {
+    labels: ['Query 1', 'Query 2', 'Query 3', 'Query 4', 'Query 5'],
+    datasets: [
+      {
+        label: 'Database Performance (ms)',
+        backgroundColor: 'rgba(54,162,235,0.2)',
+        borderColor: 'rgba(54,162,235,1)',
+        borderWidth: 1,
+        data: [120, 150, 100, 200, 170]
+      }
+    ]
+  };
+
+  const requestThrottlingData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        label: 'Request Throttling',
+        backgroundColor: 'rgba(255,99,132,0.2)',
+        borderColor: 'rgba(255,99,132,1)',
+        borderWidth: 1,
+        data: [5, 10, 15, 20, 25, 30, 35]
+      }
+    ]
+  };
+
+  const errorRatesData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        label: 'Error Rates',
+        backgroundColor: 'rgba(255,206,86,0.2)',
+        borderColor: 'rgba(255,206,86,1)',
+        borderWidth: 1,
+        data: [2, 3, 1, 4, 2, 5, 3]
+      }
+    ]
+  };
+
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -200,6 +241,39 @@ const Monitoring = () => {
             </Typography>
             <div style={{ height: '300px' }}>
               <Doughnut data={activeUsersData} options={options} />
+            </div>
+          </Paper>
+        </Grid>
+        {/* Database Performance */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper style={{ padding: '20px', height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Database Performance
+            </Typography>
+            <div style={{ height: '300px' }}>
+              <Bar data={databasePerformanceData} options={options} />
+            </div>
+          </Paper>
+        </Grid>
+        {/* Request Throttling */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper style={{ padding: '20px', height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Request Throttling
+            </Typography>
+            <div style={{ height: '300px' }}>
+              <Line data={requestThrottlingData} options={options} />
+            </div>
+          </Paper>
+        </Grid>
+        {/* Error Rates */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper style={{ padding: '20px', height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Error Rates
+            </Typography>
+            <div style={{ height: '300px' }}>
+              <Line data={errorRatesData} options={options} />
             </div>
           </Paper>
         </Grid>

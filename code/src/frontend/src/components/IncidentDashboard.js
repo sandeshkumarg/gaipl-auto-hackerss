@@ -1,6 +1,7 @@
 import React from 'react';
 import { incidents } from '../data';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Container, Grid, Card, CardContent, Typography, Chip, Divider } from '@mui/material';
 
 const IncidentDashboard = () => {
   const navigate = useNavigate();
@@ -27,48 +28,57 @@ const IncidentDashboard = () => {
     ? incidents
     : incidents.filter((incident) => incident.status === status);
 
+  const groupedIncidents = filteredIncidents.reduce((acc, incident) => {
+    if (!acc[incident.status]) {
+      acc[incident.status] = [];
+    }
+    acc[incident.status].push(incident);
+    return acc;
+  }, {});
+
   return (
-    <div style={{ padding: '100px' }}>
-      <h1>Active Incidents</h1>
-      {filteredIncidents.length === 0 ? (
-        <p>No active incidents</p>
+    <Container maxWidth="lg" style={{ marginTop: '20px' }}>
+      <Typography variant="h4" gutterBottom>
+        Incidents Dashboard
+      </Typography>
+      {Object.keys(groupedIncidents).length === 0 ? (
+        <Typography variant="body1">No active incidents</Typography>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {filteredIncidents.map((incident) => (
-            <div
-              key={incident.id}
-              className="incident-card"
-              onClick={() => handleIncidentClick(incident.id)}
-              style={{
-                border: '1px solid #ccc',
-                borderRadius: '8px',
-                padding: '16px',
-                marginBottom: '16px',
-                position: 'relative',
-                cursor: 'pointer'
-              }}
-            >
-              <h2>{incident.name}</h2>
-              <span
-                style={{
-                  position: 'absolute',
-                  top: '16px',
-                  right: '16px',
-                  width: '100px',
-                  textAlign: 'center',
-                  backgroundColor: getStatusColor(incident.status),
-                  color: 'black',
-                  padding: '4px 8px',
-                  borderRadius: '4px'
-                }}
-              >
-                {incident.status}
-              </span>
-            </div>
-          ))}
-        </div>
+        Object.keys(groupedIncidents).map((status) => (
+          <div key={status}>
+            <Typography variant="h5" gutterBottom style={{ marginTop: '20px' }}>
+              {status.charAt(0).toUpperCase() + status.slice(1)} Incidents
+            </Typography>
+            <Divider />
+            <Grid container spacing={3} style={{ marginTop: '10px' }}>
+              {groupedIncidents[status].map((incident) => (
+                <Grid item xs={12} sm={6} md={4} key={incident.id}>
+                  <Card
+                    className="incident-card"
+                    onClick={() => handleIncidentClick(incident.id)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        {incident.name}
+                      </Typography>
+                      <Chip
+                        label={incident.status}
+                        style={{
+                          backgroundColor: getStatusColor(incident.status),
+                          color: 'black',
+                          marginTop: '8px'
+                        }}
+                      />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </div>
+        ))
       )}
-    </div>
+    </Container>
   );
 };
 

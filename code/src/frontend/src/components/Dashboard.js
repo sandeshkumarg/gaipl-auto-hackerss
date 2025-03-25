@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Grid, Paper, Typography, Card, CardContent } from '@mui/material';
-import { Bar, Line, Pie } from 'react-chartjs-2';
+import { Bar, Line, Pie, Doughnut } from 'react-chartjs-2';
 import { useNavigate } from 'react-router-dom';
 import { incidents } from '../data';
 import {
@@ -92,6 +92,43 @@ const Dashboard = () => {
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
         data: [10, 20, 30]
+      }
+    ]
+  };
+
+  const incidentsByCategoryData = {
+    labels: ['Network', 'Database', 'Application', 'Security'],
+    datasets: [
+      {
+        label: 'Incidents by Category',
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+        data: [15, 25, 35, 10]
+      }
+    ]
+  };
+
+  const incidentsByPriorityData = {
+    labels: ['High', 'Medium', 'Low'],
+    datasets: [
+      {
+        label: 'Incidents by Priority',
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        data: [20, 30, 50]
+      }
+    ]
+  };
+
+  const incidentTrendsData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        label: 'Incident Trends',
+        backgroundColor: 'rgba(54,162,235,0.2)',
+        borderColor: 'rgba(54,162,235,1)',
+        borderWidth: 1,
+        data: [10, 20, 30, 40, 50, 60, 70]
       }
     ]
   };
@@ -205,6 +242,39 @@ const Dashboard = () => {
             </Typography>
             <div style={{ height: '300px' }}>
               <Pie data={topSeverityIncidentsData} options={options} />
+            </div>
+          </Paper>
+        </Grid>
+        {/* Incidents by Category */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper style={{ height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Incidents by Category
+            </Typography>
+            <div style={{ height: '300px' }}>
+              <Doughnut data={incidentsByCategoryData} options={options} />
+            </div>
+          </Paper>
+        </Grid>
+        {/* Incidents by Priority */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper style={{ height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Incidents by Priority
+            </Typography>
+            <div style={{ height: '300px' }}>
+              <Doughnut data={incidentsByPriorityData} options={options} />
+            </div>
+          </Paper>
+        </Grid>
+        {/* Incident Trends */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper style={{ height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Incident Trends
+            </Typography>
+            <div style={{ height: '300px' }}>
+              <Line data={incidentTrendsData} options={options} />
             </div>
           </Paper>
         </Grid>

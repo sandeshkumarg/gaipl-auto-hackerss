@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Container, Grid, Paper, Typography, Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { Bar, Line } from 'react-chartjs-2';
+import { Bar, Line, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
   LineElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
   PointElement
 } from 'chart.js';
-import ReportingChatbotWidget from './ReportingChatbotWidget';
+import ReportingChatbotWidget from './chatbot/ReportingChatbotWidget';
 import { incidents } from '../data';
 
 // Register the necessary components
@@ -21,6 +22,7 @@ ChartJS.register(
   LinearScale,
   BarElement,
   LineElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
@@ -70,6 +72,44 @@ const Reporting = () => {
         borderColor: 'rgba(0,0,0,1)',
         borderWidth: 2,
         data: [75, 69, 90, 91, 66, 65, 50]
+      }
+    ]
+  };
+
+  const incidentTrendsData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        label: 'Incident Trends',
+        backgroundColor: 'rgba(54,162,235,0.2)',
+        borderColor: 'rgba(54,162,235,1)',
+        borderWidth: 1,
+        data: [10, 20, 30, 40, 50, 60, 70]
+      }
+    ]
+  };
+
+  const systemUptimeData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        label: 'System Uptime (%)',
+        backgroundColor: 'rgba(75,192,192,0.2)',
+        borderColor: 'rgba(75,192,192,1)',
+        borderWidth: 1,
+        data: [99.9, 99.8, 99.7, 99.9, 99.8, 99.9, 99.7]
+      }
+    ]
+  };
+
+  const userActivityData = {
+    labels: ['Active', 'Inactive'],
+    datasets: [
+      {
+        label: 'User Activity',
+        backgroundColor: ['#FF6384', '#36A2EB'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+        data: [300, 50]
       }
     ]
   };
@@ -148,6 +188,39 @@ const Reporting = () => {
             </Typography>
             <div style={{ height: '300px' }}>
               <Line data={incidentData} options={options} />
+            </div>
+          </Paper>
+        </Grid>
+        {/* Incident Trends */}
+        <Grid item xs={12} md={6}>
+          <Paper style={{ padding: '20px', height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Incident Trends
+            </Typography>
+            <div style={{ height: '300px' }}>
+              <Line data={incidentTrendsData} options={options} />
+            </div>
+          </Paper>
+        </Grid>
+        {/* System Uptime */}
+        <Grid item xs={12} md={6}>
+          <Paper style={{ padding: '20px', height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              System Uptime
+            </Typography>
+            <div style={{ height: '300px' }}>
+              <Line data={systemUptimeData} options={options} />
+            </div>
+          </Paper>
+        </Grid>
+        {/* User Activity */}
+        <Grid item xs={12} md={6}>
+          <Paper style={{ padding: '20px', height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              User Activity
+            </Typography>
+            <div style={{ height: '300px' }}>
+              <Doughnut data={userActivityData} options={options} />
             </div>
           </Paper>
         </Grid>
