@@ -1,5 +1,4 @@
-// IncidentDetails.js
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { incidents } from '../data';
 import DependencyGraph from './DependencyGraph';
@@ -8,7 +7,6 @@ import LogDisplay from "./LogDisplay";
 import axios from "axios"; // Using Axios for making API calls
 
 const IncidentDetails = () => {
-  
   const { incidentId } = useParams();
   const navigate = useNavigate();
   const incident = incidents.find((inc) => inc.id.toString() === incidentId);
@@ -24,9 +22,6 @@ const IncidentDetails = () => {
 
   // For demonstration, convert dependencies and logs to strings.
   const systemDependencies = incident.dependencies.map(dep => dep.name).join(', ');
-  // Assume incident.logs is available (or you can provide a sample)
-  //const systemLogs = incident.logs || "Sample log entry: [ERROR] Service X failed to respond at 12:34PM.";
-
 
   // Function to convert JSON data to a single string
   function generatePlatformString(data) {
@@ -39,11 +34,9 @@ const IncidentDetails = () => {
     return `The platform type is ${type}, operating within the namespace "${namespace}". It is hosted on the following nodes: ${hosts}.`;
   }
 
-
   const [systemLogs, setSystemLogs] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
 
   // Destructure the required parameters from the passed incident object.
   const dependencies = incident.dependencies.map(dep => dep.name).join(', ');
@@ -51,7 +44,6 @@ const IncidentDetails = () => {
   const platform = generatePlatformString(incident.platform);
   const startTime = '2024-03-24 12:10:00';
   const endTime = '2024-03-24 12:20:00';
-
 
   useEffect(() => {
     // Function to fetch system logs from the external API
@@ -64,14 +56,6 @@ const IncidentDetails = () => {
         const apiUrl = "http://localhost:8000/splunk/logs";
 
         const response = await axios.get(apiUrl);
-
-        /*const response = await axios.post(apiUrl, {
-            name: name,
-            platform: platform,
-            deps: dependencies, // Assume dependencies is an array.
-            start: startTime,
-            end: endTime,
-        });*/
 
         // Update the state with the fetched logs.
         setSystemLogs(response.data);
@@ -89,19 +73,33 @@ const IncidentDetails = () => {
     fetchSystemLogs();
   }, [name, platform, dependencies, startTime, endTime]); // Re-run the effect if parameters change.
 
-
-
+  // Function to get the status color
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'open':
+        return 'yellow';
+      case 'closed':
+        return 'green';
+      case 'inprogress':
+        return 'orange';
+      default:
+        return 'gray';
+    }
+  };
 
   return (
-    <div style={{ position: 'relative' , padding: '100px'}}>
+    <div style={{ position: 'relative', padding: '100px' }}>
       <button onClick={() => navigate('/incident')} style={{ marginBottom: '20px' }}>
         &larr; Back to Incidents
       </button>
       <h1>{incident.name}</h1>
       <h2>Incident ID: {incident.id}</h2>
       <h2>Application: {incident.appName}</h2>
+      <h2>Description: {incident.description}</h2>
+      <h3>Summary: {incident.summary}</h3>
+      <h3>Status: <span style={{ background: getStatusColor(incident.status) }}>{incident.status}</span></h3>
       <hr />
-      <LogDisplay systemLogs={systemLogs}/>
+      <LogDisplay systemLogs={systemLogs} />
       <h3>Dependency Graph</h3>
       <DependencyGraph
         appName={incident.appName}
