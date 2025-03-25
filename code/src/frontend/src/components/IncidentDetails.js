@@ -91,7 +91,7 @@ const IncidentDetails = () => {
 
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative' , adding: '100px'}}>
       <button onClick={() => navigate('/incident')} style={{ marginBottom: '20px' }}>
         &larr; Back to Incidents
       </button>
