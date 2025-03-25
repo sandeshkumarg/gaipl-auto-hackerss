@@ -11,6 +11,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta
 import json
+# Create server parameters for stdio connection
+from mcp import ClientSession, StdioServerParameters
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+from tools.simple_weather import tools, add, multiply
+from langchain_core.messages import HumanMessage
 
 
 
@@ -80,6 +86,12 @@ def clean_and_parse_json(llm_response):
         return None
 
 
+server_params = StdioServerParameters(
+    command="python",
+    # Make sure to update to the full absolute path to your math_server.py file
+    args=["/path/to/math_server.py"],
+)
+
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     """
@@ -91,13 +103,23 @@ async def chat_endpoint(request: ChatRequest):
         [
             (
                 "system",
-                "You are a System Troubleshooter who knows how to identify issues related to Distributed Systems, Microservices, Kafka, Databases such as Oracle, Mongo, SQL Server, Redis and other technologies available. The user will provide the System architecture and the architecture details would contain the dependent systems and also the dependencies for the given system. The user also will provide system logs containing errors. Based on the details provided, provide troubleshooting steps and suggest corrective actions to be taken to resolve the issue. Feel free to ask further information as needed for incident resolution. Keep the instructions short to less than a paragraph so the user can resolve the issue faster. Try to limit the response to 100 words or less when possible. Goal is to resolve the error as soon as possible with least manual steps. The logs are {logs} and the system dependencies {dependencies}",
+                "You are a System Administrator who knows how to identify issues related to Distributed Systems, Microservices, Kafka, Databases such as Oracle, Mongo, SQL Server, Redis and other technologies available. The user will provide the System architecture and the architecture details would contain the dependent systems and also the dependencies for the given system. The user also will provide system logs containing errors. Based on the details provided, provide troubleshooting steps and suggest corrective actions to be taken to resolve the issue. Feel free to ask further information as needed for incident resolution. Keep the instructions short to less than a paragraph so the user can resolve the issue faster. Try to limit the response to 100 words or less when possible. Goal is to resolve the error as soon as possible with least manual steps. The logs are {logs} and the system dependencies {dependencies}",
             ),
             ("user", "{input}"),
         ]
     )
 
-    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+    prompt2 = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a helpful assistant trying to assist your users with mathematics. You have access to various tools. Use the tools whenever possible and respond back to the user",
+            ),
+            ("user", "{input}"),
+        ]
+    )
+
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash",
                              temperature=0.7,
             max_tokens=None,
             timeout=None,
@@ -109,22 +131,65 @@ async def chat_endpoint(request: ChatRequest):
 
         print(request)
 
+        
+
+
+        t_query = request.messages[0]["content"]
+        
+        print('input from user query:')
+        print(t_query)
+        t_messages = [HumanMessage(t_query)]
+
+        llm_with_tools = llm.bind_tools(tools)
+
+        chain2 = prompt2 | llm_with_tools
+
+
+        ai_msg = chain2.invoke(t_messages)
+        print(ai_msg)
+
+        for tool_call in ai_msg.tool_calls:
+            selected_tool = {"add": add, "multiply": multiply}[tool_call["name"].lower()]
+            tool_msg = selected_tool.invoke(tool_call)
+            print('----')
+            print(tool_msg)
+            t_messages.append(tool_msg)
+
+        print('Printing all conversations*******')
+        print(t_messages)
+
+        t_messages.append(HumanMessage('Summarise the respond based on earlier conversation and Tool response and respond back to user.'))
+
+        r = chain2.invoke(t_messages)
+        print('Final response ---')
+        print(r)
+
+        return {"reply": r.content}
+
+
+
+        #query = request.messages
+
+        print(request)
+
         logs = request.logs
         deps = request.dependencies
 
         chats = transform(request)
         #result = llm.invoke(chats)
+        
 
-        chain = prompt | llm
-        result = chain.invoke(
-            {
-                "logs": logs,
-                "dependencies": deps,
-                "input": chats,
-            }
-        )
 
-        print(result.content)
+        #chain = prompt | llm
+        #result = chain.invoke(
+        #    {
+        #        "logs": logs,
+        #        "dependencies": deps,
+        #        "input": chats,
+        #    }
+        #)
+
+        print(result)
         return {"reply": result.content}
     
     except Exception as e:
