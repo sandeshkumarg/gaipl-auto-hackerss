@@ -46,7 +46,7 @@ const AutomationChatbotWidget = (automationdata) => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend, automationdata: jsonToLogicalString(automationdata) })
+        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend, automationdata: JSON.stringify(automationdata) })
       });
 
       const data = await response.json();

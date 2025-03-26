@@ -47,7 +47,7 @@ const ReportingChatbotWidget = ({ incidents, reportingdata }) => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend, incidents: incidents , reportingdata: generateDetailedDescription(reportingdata) })
+        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend, incidents: incidents , reportingdata: JSON.stringify(reportingdata) })
       });
 
       const data = await response.json();

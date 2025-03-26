@@ -21,7 +21,7 @@ export const jsonToLogicalString = (jsonData, indent = 0) => {
 
 export const generateDetailedDescription = (data) => {
     let description = '';
-
+    console.log(data);
     for (const key in data) {
         if (data.hasOwnProperty(key)) {
             const dataset = data[key].datasets[0];
@@ -37,4 +37,8 @@ export const generateDetailedDescription = (data) => {
     }
 
     return description;
+};
+
+export const generateMonitoringDetailedDescription = (data) => {
+    return JSON.stringify(data);
 };

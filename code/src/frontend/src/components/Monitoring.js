@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper, Typography } from '@mui/material';
 import { Line, Doughnut, Bar } from 'react-chartjs-2';
 import {
@@ -29,149 +29,28 @@ ChartJS.register(
 );
 
 const Monitoring = () => {
-  const cpuUsageData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'CPU Usage',
-        fill: false,
-        lineTension: 0.1,
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
-        borderCapStyle: 'butt',
-        borderDash: [],
-        borderDashOffset: 0.0,
-        borderJoinStyle: 'miter',
-        pointBorderColor: 'rgba(75,192,192,1)',
-        pointBackgroundColor: '#fff',
-        pointBorderWidth: 1,
-        pointHoverRadius: 5,
-        pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-        pointHoverBorderColor: 'rgba(220,220,220,1)',
-        pointHoverBorderWidth: 2,
-        pointRadius: 1,
-        pointHitRadius: 10,
-        data: [65, 59, 80, 81, 56, 55, 40]
-      }
-    ]
-  };
+  const [monitoringData, setMonitoringData] = useState(null);
 
-  const memoryUsageData = {
-    labels: ['Used', 'Free'],
-    datasets: [
-      {
-        label: 'Memory Usage',
-        backgroundColor: ['#FF6384', '#36A2EB'],
-        hoverBackgroundColor: ['#FF6384', '#36A2EB'],
-        data: [300, 50]
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/monitoring_data');
+        const data = await response.json();
+        setMonitoringData(data);
+        console.log(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    ]
-  };
+    };
 
-  const diskIOData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'Disk I/O',
-        fill: false,
-        lineTension: 0.1,
-        backgroundColor: 'rgba(153,102,255,0.4)',
-        borderColor: 'rgba(153,102,255,1)',
-        borderCapStyle: 'butt',
-        borderDash: [],
-        borderDashOffset: 0.0,
-        borderJoinStyle: 'miter',
-        pointBorderColor: 'rgba(153,102,255,1)',
-        pointBackgroundColor: '#fff',
-        pointBorderWidth: 1,
-        pointHoverRadius: 5,
-        pointHoverBackgroundColor: 'rgba(153,102,255,1)',
-        pointHoverBorderColor: 'rgba220,220,220,1)',
-        pointHoverBorderWidth: 2,
-        pointRadius: 1,
-        pointHitRadius: 10,
-        data: [65, 59, 80, 81, 56, 55, 40]
-      }
-    ]
-  };
+    fetchData();
+  }, []);
 
-  const networkTrafficData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'Network Traffic',
-        fill: false,
-        lineTension: 0.1,
-        backgroundColor: 'rgba(255,159,64,0.4)',
-        borderColor: 'rgba(255,159,64,1)',
-        borderCapStyle: 'butt',
-        borderDash: [],
-        borderDashOffset: 0.0,
-        borderJoinStyle: 'miter',
-        pointBorderColor: 'rgba(255,159,64,1)',
-        pointBackgroundColor: '#fff',
-        pointBorderWidth: 1,
-        pointHoverRadius: 5,
-        pointHoverBackgroundColor: 'rgba(255,159,64,1)',
-        pointHoverBorderColor: 'rgba(220,220,220,1)',
-        pointHoverBorderWidth: 2,
-        pointRadius: 1,
-        pointHitRadius: 10,
-        data: [65, 59, 80, 81, 56, 55, 40]
-      }
-    ]
-  };
+  if (!monitoringData) {
+    return <div>Loading...</div>;
+  }
 
-  const activeUsersData = {
-    labels: ['Active', 'Inactive'],
-    datasets: [
-      {
-        label: 'Active Users',
-        backgroundColor: ['#FFCE56', '#FF6384'],
-        hoverBackgroundColor: ['#FFCE56', '#FF6384'],
-        data: [200, 100]
-      }
-    ]
-  };
-
-  const databasePerformanceData = {
-    labels: ['Query 1', 'Query 2', 'Query 3', 'Query 4', 'Query 5'],
-    datasets: [
-      {
-        label: 'Database Performance (ms)',
-        backgroundColor: 'rgba(54,162,235,0.2)',
-        borderColor: 'rgba(54,162,235,1)',
-        borderWidth: 1,
-        data: [120, 150, 100, 200, 170]
-      }
-    ]
-  };
-
-  const requestThrottlingData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'Request Throttling',
-        backgroundColor: 'rgba(255,99,132,0.2)',
-        borderColor: 'rgba(255,99,132,1)',
-        borderWidth: 1,
-        data: [5, 10, 15, 20, 25, 30, 35]
-      }
-    ]
-  };
-
-  const errorRatesData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'Error Rates',
-        backgroundColor: 'rgba(255,206,86,0.2)',
-        borderColor: 'rgba(255,206,86,1)',
-        borderWidth: 1,
-        data: [2, 3, 1, 4, 2, 5, 3]
-      }
-    ]
-  };
+  const { cpuUsageData, memoryUsageData, diskIOData, networkTrafficData, activeUsersData, databasePerformanceData, requestThrottlingData, errorRatesData } = monitoringData;
 
   const options = {
     responsive: true,
@@ -279,7 +158,7 @@ const Monitoring = () => {
         </Grid>
         {/* Add more widgets as needed */}
       </Grid>
-      <MonitoringChatbotWidget />
+      <MonitoringChatbotWidget monitoringdata={monitoringData} />
     </Container>
   );
 };

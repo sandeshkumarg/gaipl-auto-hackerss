@@ -46,7 +46,7 @@ const ConfigManagementChatbotWidget = (configdata) => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend, configdata: jsonToLogicalString(configdata) })
+        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend, configdata: JSON.stringify(configdata) })
       });
 
       const data = await response.json();

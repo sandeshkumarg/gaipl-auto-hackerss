@@ -3,8 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { Dialog, DialogContent, DialogTitle, IconButton, Tooltip } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { generateMonitoringDetailedDescription } from '../../utilities/helper';
 
-const MonitoringChatbotWidget = () => {
+const MonitoringChatbotWidget = (monitoringdata) => {
   const [collapsed, setCollapsed] = useState(true);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -45,7 +46,7 @@ const MonitoringChatbotWidget = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend })
+        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend , monitoringdata: JSON.stringify(monitoringdata) })
       });
 
       const data = await response.json();
