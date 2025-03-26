@@ -91,6 +91,7 @@ The Frontend is based on React. The backend is built using Python FastAPI. It us
 5. Create a environment variable 
    ```
    GOOGLE_API_KEY=ABC
+   MCP_SERVER_PATH=/code/src/mcp/kubernetes.py (Point to kubernetes.py)
    ```
 6. Run the project  
    ```sh
