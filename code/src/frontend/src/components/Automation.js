@@ -69,7 +69,7 @@ const Automation = () => {
   return (
     <Container maxWidth="lg" style={{ marginTop: '20px' }}>
       <Typography variant="h4" gutterBottom>
-        Automation using MCP
+        Task Automation
       </Typography>
       <Grid container spacing={3}>
         {/* Task Automation */}
