@@ -3,8 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { Dialog, DialogContent, DialogTitle, IconButton, Tooltip } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { generateDetailedDescription } from '../../utilities/helper';
 
-const ReportingChatbotWidget = ({ incidents }) => {
+
+const ReportingChatbotWidget = ({ incidents, reportingdata }) => {
   const [collapsed, setCollapsed] = useState(true);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -45,7 +47,7 @@ const ReportingChatbotWidget = ({ incidents }) => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend, incidents: incidents })
+        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend, incidents: incidents , reportingdata: generateDetailedDescription(reportingdata) })
       });
 
       const data = await response.json();

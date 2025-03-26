@@ -18,3 +18,23 @@ export const jsonToLogicalString = (jsonData, indent = 0) => {
 
     return logicalString;
 };
+
+export const generateDetailedDescription = (data) => {
+    let description = '';
+
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            const dataset = data[key].datasets[0];
+            description += `${dataset.label}:\n`;
+            description += `${dataset.description}\n`;
+            dataset.data.forEach((value, index) => {
+                description += `${data[key].labels[index]}: ${value}\n`;
+            });
+            description += `Summary: ${dataset.summary}\n`;
+            description += `Filter Criteria: ${dataset.filterCriteria}\n`;
+            description += `Prompt: ${dataset.prompt}\n\n`;
+        }
+    }
+
+    return description;
+};
