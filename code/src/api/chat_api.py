@@ -22,16 +22,20 @@ class ChatRequest(BaseModel):
     dependencies: str
 
 class AutomationChatRequest(BaseModel):
+    chatid: str
     messages: list  # Each message is typically a dict with keys "role" and "content"
 
 class ReportingChatRequest(BaseModel):
+    chatid: str
     messages: list  # Each message is typically a dict with keys "role" and "content"
     incidents: list  # Incident details
 
 class MonitoringChatRequest(BaseModel):
+    chatid: str
     messages: list  # Each message is typically a dict with keys "role" and "content"
 
 class ConfigManagementChatRequest(BaseModel):
+    chatid: str
     messages: list  # Each message is typically a dict with keys "role" and "content"
 
 class RunBookRequest(BaseModel):
@@ -164,6 +168,18 @@ class ChatAPI:
         print(contents)
         return contents
     
+    def clean_and_parse_json(self,llm_response):
+    # Remove the formatting markers like ```json and ```
+        cleaned_response = llm_response.strip('```json').strip('```').strip()
+        
+        try:
+            # Parse the cleaned string as JSON
+            json_data = json.loads(cleaned_response)
+            return json_data
+        except json.JSONDecodeError as e:
+            print("Failed to parse JSON:", e)
+            return None
+
     async def chat(self, request: ChatRequest):
         """
         POST endpoint to chat with bot.
@@ -343,7 +359,7 @@ class ChatAPI:
             ]
         )
 
-        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash",
                                     temperature=0.7,
                                     max_tokens=None,
                                     timeout=None,
@@ -455,9 +471,10 @@ class ChatAPI:
                 }
             )
 
-            response_content = result.content
-            print(response_content)
-            return {"reply": response_content}
+            print(result)
+
+            #print(response_content)
+            return {"reply": str(result.content)}
 
         except Exception as e:
             print(e)

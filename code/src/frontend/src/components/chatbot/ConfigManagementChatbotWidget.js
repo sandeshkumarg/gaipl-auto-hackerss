@@ -34,12 +34,12 @@ const ConfigManagementChatbotWidget = () => {
     ];
 
     try {
-      const response = await fetch("http://localhost:8000/api/configManagementchat", {
+      const response = await fetch("http://localhost:8000/api/config_management_chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ chatID: chatID.current, messages: messagesForBackend })
+        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend })
       });
 
       const data = await response.json();
