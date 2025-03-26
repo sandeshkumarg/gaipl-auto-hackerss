@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { incidents } from '../data';
+import { incidents } from './feed/data';
 import DependencyGraph from './DependencyGraph';
 import IncidentChatbotWidget from './chatbot/IncidentChatbotWidget';
 import LogDisplay from "./LogDisplay";

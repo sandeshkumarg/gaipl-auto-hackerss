@@ -1,39 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Grid, Paper, Typography, Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Chip } from '@mui/material';
 import ConfigManagementChatbotWidget from './chatbot/ConfigManagementChatbotWidget';
 
 const ConfigManagement = () => {
   const [open, setOpen] = useState(false);
-  const [configurations, setConfigurations] = useState([
-    { id: 1, name: 'Database Config', version: 'v1.0', status: 'Active' },
-    { id: 2, name: 'API Config', version: 'v1.2', status: 'Active' },
-    { id: 3, name: 'Web Server Config', version: 'v2.0', status: 'Completed' },
-    { id: 4, name: 'Load Balancer Config', version: 'v1.1', status: 'In Progress' },
-    { id: 5, name: 'Cache Config', version: 'v1.0', status: 'Scheduled' },
-    { id: 6, name: 'Firewall Config', version: 'v1.3', status: 'Cancelled' },
-    { id: 7, name: 'DNS Config', version: 'v1.0', status: 'Error' },
-  ]);
-  const [changeRequests, setChangeRequests] = useState([
-    { id: 1, name: 'Update Database Config', status: 'Pending' },
-    { id: 2, name: 'Upgrade API Version', status: 'Approved' },
-    { id: 3, name: 'Modify Firewall Rules', status: 'In Progress' },
-    { id: 4, name: 'Add New Cache Layer', status: 'Completed' },
-    { id: 5, name: 'Remove Deprecated APIs', status: 'Cancelled' },
-  ]);
-  const [complianceRecords, setComplianceRecords] = useState([
-    { id: 1, name: 'Database Compliance', status: 'Compliant' },
-    { id: 2, name: 'API Compliance', status: 'Non-Compliant' },
-    { id: 3, name: 'Web Server Compliance', status: 'Compliant' },
-    { id: 4, name: 'Load Balancer Compliance', status: 'Non-Compliant' },
-  ]);
-  const [deploymentHistory, setDeploymentHistory] = useState([
-    { id: 1, name: 'Database Deployment', date: '2025-03-01' },
-    { id: 2, name: 'API Deployment', date: '2025-03-02' },
-    { id: 3, name: 'Web Server Deployment', date: '2025-03-03' },
-    { id: 4, name: 'Load Balancer Deployment', date: '2025-03-04' },
-    { id: 5, name: 'Cache Deployment', date: '2025-03-05' },
-  ]);
+  const [configurations, setConfigurations] = useState([]);
+  const [changeRequests, setChangeRequests] = useState([]);
+  const [complianceRecords, setComplianceRecords] = useState([]);
+  const [deploymentHistory, setDeploymentHistory] = useState([]);
   const [newConfig, setNewConfig] = useState({ name: '', version: '', status: 'Active' });
+  const [configdata, setApiData] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/config_management_data');
+        const data = await response.json();
+        setConfigurations(data.configurations);
+        setChangeRequests(data.changeRequests);
+        setComplianceRecords(data.complianceRecords);
+        setDeploymentHistory(data.deploymentHistory);
+        setApiData(data); // Store the entire response data
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -225,7 +219,7 @@ const ConfigManagement = () => {
         </Grid>
       </Grid>
       {/* Add Configuration Dialog */}
-      <ConfigManagementChatbotWidget />
+      <ConfigManagementChatbotWidget configdata={configdata} />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add Configuration</DialogTitle>
         <DialogContent>

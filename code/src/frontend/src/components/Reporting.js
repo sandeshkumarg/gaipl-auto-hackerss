@@ -14,7 +14,7 @@ import {
   PointElement
 } from 'chart.js';
 import ReportingChatbotWidget from './chatbot/ReportingChatbotWidget';
-import { incidents } from '../data';
+import { incidents } from './feed/data';
 
 // Register the necessary components
 ChartJS.register(

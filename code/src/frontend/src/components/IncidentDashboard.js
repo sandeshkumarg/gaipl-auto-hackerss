@@ -1,5 +1,5 @@
 import React from 'react';
-import { incidents } from '../data';
+import { incidents } from './feed/data';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Grid, Card, CardContent, Typography, Chip, Divider } from '@mui/material';
 

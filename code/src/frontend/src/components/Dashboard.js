@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Grid, Paper, Typography, Card, CardContent } from '@mui/material';
 import { Bar, Line, Pie, Doughnut } from 'react-chartjs-2';
 import { useNavigate } from 'react-router-dom';
-import { incidents } from '../data';
+import { incidents } from './feed/data';
 import {
   Chart as ChartJS,
   CategoryScale,

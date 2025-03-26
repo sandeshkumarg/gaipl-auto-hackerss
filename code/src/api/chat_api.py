@@ -36,7 +36,8 @@ class MonitoringChatRequest(BaseModel):
 
 class ConfigManagementChatRequest(BaseModel):
     chatid: str
-    messages: list  # Each message is typically a dict with keys "role" and "content"
+    messages: list
+    configdata: str  # Each message is typically a dict with keys "role" and "content"
 
 class RunBookRequest(BaseModel):
     dependencies: str
@@ -113,6 +114,7 @@ class ChatAPI:
         self.router.post("/config_management_chat")(self.config_management_chat)
         self.router.post("/logs")(self.logs)
         self.router.get("/splunk_logs")(self.splunk_logs)
+        self.router.get("/config_management_data")(self.config_management_data)
         self.router.post("/systems")(self.systems)
         self.router.post("/runbooks")(self.runbooks)
 
@@ -445,7 +447,7 @@ class ChatAPI:
             [
                 (
                     "system",
-                    "You are a Configuration and Change Management Assistant designed to assist software and infrastructure industries by automating configuration tracking, change request workflows, impact analysis, deployment, monitoring, compliance, and reporting while ensuring efficiency, accuracy, and actionable responses tailored to user queries based on retrieved RAG data.",
+                    "You are a Configuration and Change Management Assistant based on data {configdata} designed to assist software and infrastructure industries by automating configuration tracking, change request workflows, impact analysis, deployment, monitoring, compliance, and reporting while ensuring efficiency, accuracy, and actionable responses tailored to user queries based on retrieved RAG data.",
                 ),
                 ("user", "{input}"),
             ]
@@ -468,6 +470,7 @@ class ChatAPI:
             result = chain.invoke(
                 {
                     "input": chats,
+                    "configdata": request.configdata
                 }
             )
 
@@ -550,7 +553,17 @@ class ChatAPI:
             print(e)
             raise HTTPException(status_code=500, detail=str(e))
 
-
+    async def config_management_data(self):
+        # Read the config management data from 'feed/configManagementData.json'
+        try:
+            for filename in os.listdir('feed'):
+                with open(f'feed/configManagementData.json', 'r') as file:
+                    data = json.load(file)
+            return JSONResponse(content=data)
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=500, detail=str(e))
+        
     async def systems(self, request: SystemsRequest):
         """
         Receives a conversation (as a list of messages), calls Google Gemini Chat API,
