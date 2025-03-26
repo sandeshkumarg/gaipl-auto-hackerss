@@ -303,7 +303,7 @@ class ChatAPI:
             ]
         )
 
-        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash",
                                     temperature=0.7,
                                     max_tokens=None,
                                     timeout=None,
@@ -408,7 +408,7 @@ class ChatAPI:
             ]
         )
 
-        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash",
                                     temperature=0.7,
                                     max_tokens=None,
                                     timeout=None,
@@ -453,7 +453,7 @@ class ChatAPI:
             ]
         )
 
-        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash",
                                     temperature=0.7,
                                     max_tokens=None,
                                     timeout=None,
@@ -500,7 +500,7 @@ class ChatAPI:
             ]
         )
 
-        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-thinking-exp-01-21",
+        llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash",
                                     temperature=0.7,
                                     max_tokens=None,
                                     timeout=None,

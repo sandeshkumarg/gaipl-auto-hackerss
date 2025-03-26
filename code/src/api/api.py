@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from chat_api import ChatAPI  # Import your class
 from dotenv import load_dotenv  # Import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 load_dotenv()
 app = FastAPI()
@@ -16,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MCP_SERVER_PATH = "/home/developer/code/repo/gaipl-auto-hackerss/code/src/mcp/kubernetes.py"
+MCP_SERVER_PATH = os.getenv("MCP_SERVER_PATH")
 
 @app.on_event("startup")
 async def on_startup():
