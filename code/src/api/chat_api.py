@@ -41,7 +41,7 @@ The user will provide system logs which may contain errors or failures. By looki
 The logs are {logs} and the system dependencies {dependencies}"""
 
 REPORTING_CHATBOT_HELPER_PROMPT = """
-You are a reporting chatbot helper. Your role is to analyze the incidents passed and respond to the queries based on the data available in the incidents. Understand the incoming message and process it to respond with an appropriate response based on the input. User can ask questions on individual incidents or get a summary of all incidents. The incidents are {incidents}. The response should be realistic and human understandable format and response should be brief, not exceeding 3 or 4 lines.
+You are a reporting chatbot helper. Your role is to analyze the incidents passed and respond to the queries based on the data available in the incidents. Understand the incoming message and process it to respond with an appropriate response based on the input. User can ask questions on individual incidents or get a summary of all incidents. The incidents are {incidents} and reporting data {reportingdata} that we can use to learn and respond. The response should be realistic and human understandable format and response should be brief, not exceeding 3 or 4 lines.
 """
 
 MONITORING_CHATBOT_HELPER_PROMPT = """
@@ -103,6 +103,7 @@ class ReportingChatRequest(BaseModel):
     chatid: str
     messages: list  # Each message is typically a dict with keys "role" and "content"
     incidents: list  # Incident details
+    reportingdata: str
 
 class MonitoringChatRequest(BaseModel):
     chatid: str
@@ -177,6 +178,7 @@ class ChatAPI:
         self.router.get("/splunk_logs")(self.splunk_logs)
         self.router.get("/config_management_data")(self.config_management_data)
         self.router.get("/automation_data")(self.automation_data)
+        self.router.get("/reporting_data")(self.reporting_data)
         self.router.post("/systems")(self.systems)
         self.router.post("/runbooks")(self.runbooks)
 
@@ -442,6 +444,7 @@ class ChatAPI:
                 {
                     "input": chats,
                     "incidents": incidents,
+                    "reportingdata": request.reportingdata
                 }
             )
 
@@ -633,6 +636,17 @@ class ChatAPI:
         except Exception as e:
             print(e)
             raise HTTPException(status_code=500, detail=str(e))
+        
+    async def reporting_data(self):
+        # Read the automation data from 'feed/reportingData.json'
+        try:
+            for filename in os.listdir('feed'):
+                with open(f'feed/reportingData.json', 'r') as file:
+                    data = json.load(file)
+            return JSONResponse(content=data)
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=500, detail=str(e))        
         
     async def systems(self, request: SystemsRequest):
         """

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper, Typography, Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Bar, Line, Doughnut } from 'react-chartjs-2';
 import {
@@ -36,6 +36,21 @@ const Reporting = () => {
     { id: 2, name: 'Incident Report', date: '2025-03-02' },
   ]);
   const [newReport, setNewReport] = useState({ name: '', date: '' });
+  const [reportData, setReportData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/reporting_data');
+        const data = await response.json();
+        setReportData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -50,69 +65,11 @@ const Reporting = () => {
     setOpen(false);
   };
 
-  const systemPerformanceData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'System Performance',
-        backgroundColor: 'rgba(75,192,192,1)',
-        borderColor: 'rgba(0,0,0,1)',
-        borderWidth: 2,
-        data: [65, 59, 80, 81, 56, 55, 40]
-      }
-    ]
-  };
+  if (!reportData) {
+    return <div>Loading...</div>;
+  }
 
-  const incidentData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'Incidents',
-        backgroundColor: 'rgba(255,99,132,1)',
-        borderColor: 'rgba(0,0,0,1)',
-        borderWidth: 2,
-        data: [75, 69, 90, 91, 66, 65, 50]
-      }
-    ]
-  };
-
-  const incidentTrendsData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'Incident Trends',
-        backgroundColor: 'rgba(54,162,235,0.2)',
-        borderColor: 'rgba(54,162,235,1)',
-        borderWidth: 1,
-        data: [10, 20, 30, 40, 50, 60, 70]
-      }
-    ]
-  };
-
-  const systemUptimeData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'System Uptime (%)',
-        backgroundColor: 'rgba(75,192,192,0.2)',
-        borderColor: 'rgba(75,192,192,1)',
-        borderWidth: 1,
-        data: [99.9, 99.8, 99.7, 99.9, 99.8, 99.9, 99.7]
-      }
-    ]
-  };
-
-  const userActivityData = {
-    labels: ['Active', 'Inactive'],
-    datasets: [
-      {
-        label: 'User Activity',
-        backgroundColor: ['#FF6384', '#36A2EB'],
-        hoverBackgroundColor: ['#FF6384', '#36A2EB'],
-        data: [300, 50]
-      }
-    ]
-  };
+  const { systemPerformanceData, incidentData, incidentTrendsData, systemUptimeData, userActivityData } = reportData;
 
   const options = {
     responsive: true,
@@ -227,7 +184,7 @@ const Reporting = () => {
         {/* Add more widgets as needed */}
       </Grid>
       {/* Generate Report Dialog */}
-      <ReportingChatbotWidget incidents={incidents} />
+      <ReportingChatbotWidget incidents={incidents} reportingdata={reportData} />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Generate Report</DialogTitle>
         <DialogContent>
