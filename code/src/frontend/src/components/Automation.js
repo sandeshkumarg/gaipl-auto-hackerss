@@ -1,36 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper, Typography, Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, LinearProgress, Chip } from '@mui/material';
 import AutomationChatbotWidget from './chatbot/AutomationChatbotWidget';
 
 const Automation = () => {
   const [open, setOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState(null);
-  const [tasks, setTasks] = useState([
-    { id: 1, name: 'Backup Database', schedule: 'Daily at 2 AM', status: 'Active', info: 'Backup of main database', completion: 75 },
-    { id: 2, name: 'Generate Reports', schedule: 'Weekly on Monday', status: 'Active', info: 'Generate weekly sales reports', completion: 50 },
-    { id: 3, name: 'System Update', schedule: 'Monthly on 1st', status: 'Completed', info: 'Update system software', completion: 100 },
-    { id: 4, name: 'Data Sync', schedule: 'Hourly', status: 'In Progress', info: 'Sync data between servers', completion: 30 },
-    { id: 5, name: 'Security Scan', schedule: 'Daily at 3 AM', status: 'Scheduled', info: 'Perform security scan', completion: 0 },
-    { id: 6, name: 'Cleanup Logs', schedule: 'Weekly on Sunday', status: 'Cancelled', info: 'Cleanup old logs', completion: 0 },
-    { id: 7, name: 'Deploy Application', schedule: 'On Demand', status: 'Error', info: 'Deploy new application version', completion: 0 },
-  ]);
-  const [workflows, setWorkflows] = useState([
-    { id: 1, name: 'Onboarding Workflow', status: 'Active', description: 'Automate employee onboarding process' },
-    { id: 2, name: 'Offboarding Workflow', status: 'Completed', description: 'Automate employee offboarding process' },
-  ]);
-  const [integrations, setIntegrations] = useState([
-    { id: 1, name: 'Salesforce Integration', status: 'Active', description: 'Integrate with Salesforce CRM' },
-    { id: 2, name: 'Slack Integration', status: 'Error', description: 'Integrate with Slack for notifications' },
-  ]);
-  const [notifications, setNotifications] = useState([
-    { id: 1, name: 'Email Alerts', status: 'Active', description: 'Send email alerts for critical issues' },
-    { id: 2, name: 'SMS Alerts', status: 'Scheduled', description: 'Send SMS alerts for high priority issues' },
-  ]);
-  const [reports, setReports] = useState([
-    { id: 1, name: 'Monthly Sales Report', status: 'Completed', description: 'Generate monthly sales report' },
-    { id: 2, name: 'Weekly Performance Report', status: 'In Progress', description: 'Generate weekly performance report' },
-  ]);
+  const [tasks, setTasks] = useState([]);
+  const [workflows, setWorkflows] = useState([]);
+  const [integrations, setIntegrations] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [reports, setReports] = useState([]);
   const [newTask, setNewTask] = useState({ name: '', schedule: '', status: 'Active', info: '', completion: 0 });
+  const [automationdata, setApiData] = useState({});
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/automation_data');
+        const data = await response.json();
+        setTasks(data.tasks);
+        setWorkflows(data.workflows);
+        setIntegrations(data.integrations);
+        setNotifications(data.notifications);
+        setReports(data.reports);
+        setApiData(data); // Store the entire response data
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleClickOpen = (content) => {
     setDialogContent(content);
@@ -287,7 +286,7 @@ const Automation = () => {
         </Grid>
       </Grid>
       {/* Add Task Dialog */}
-      <AutomationChatbotWidget />
+      <AutomationChatbotWidget automationdata={automationdata} />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{dialogContent}</DialogTitle>
         <DialogContent>
