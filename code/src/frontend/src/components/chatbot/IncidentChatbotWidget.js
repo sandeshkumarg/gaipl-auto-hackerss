@@ -29,17 +29,18 @@ const IncidentChatbotWidget = ({ systemDependencies, systemLogs }) => {
     setMessages((prev) => [...prev, userMessage]);
     setUserInput('');
 
-    const messagesForBackend = [
+    const messagesForBackend = trimmedInput;
+    /*[
       { role: "user", content: trimmedInput }
-    ];
+    ];*/
 
     try {
-      const response = await fetch("http://localhost:8000/incidentchat", {
+      const response = await fetch("http://localhost:8000/api/incidentchat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ chatID: chatID.current, messages: messagesForBackend, logs: systemLogs, dependencies: systemDependencies })
+        body: JSON.stringify({ chatid: chatID.current, messages: messagesForBackend, logs: systemLogs, dependencies: systemDependencies })
       });
 
       const data = await response.json();

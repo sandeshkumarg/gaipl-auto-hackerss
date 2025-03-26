@@ -53,7 +53,7 @@ const IncidentDetails = () => {
 
       try {
         // Example API URL; adjust this according to your API endpoint.
-        const apiUrl = "http://localhost:8000/splunk/logs";
+        const apiUrl = "http://localhost:8000/api/splunk_logs";
 
         const response = await axios.get(apiUrl);
 

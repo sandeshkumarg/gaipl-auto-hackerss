@@ -34,7 +34,7 @@ const MonitoringChatbotWidget = () => {
     ];
 
     try {
-      const response = await fetch("http://localhost:8000/monitoringchat", {
+      const response = await fetch("http://localhost:8000/api/monitoringchat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

@@ -34,7 +34,7 @@ const AutomationChatbotWidget = () => {
     ];
 
     try {
-      const response = await fetch("http://localhost:8000/automationchat", {
+      const response = await fetch("http://localhost:8000/api/automationchat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

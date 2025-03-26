@@ -34,7 +34,7 @@ const ReportingChatbotWidget = ({ incidents }) => {
     ];
 
     try {
-      const response = await fetch("http://localhost:8000/reportingchat", {
+      const response = await fetch("http://localhost:8000/api/reportingchat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
