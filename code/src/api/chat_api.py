@@ -267,7 +267,7 @@ class ChatAPI:
                 # Append new messages to the chat history
             chat_history = self.chat_histories[chatid]
 
-            chat_history["messages"].append(SystemMessage(content=PROMPT_TEXT))
+            chat_history["messages"].append(SystemMessage(content=CHAT_PROMPT_TEXT))
             chat_history["messages"].append(HumanMessage(content=request.messages))
             chat_history["timestamp"] = time.time()  # Update the timestamp
 

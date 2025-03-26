@@ -35,9 +35,7 @@ const IncidentChatbotWidget = ({ systemDependencies, systemLogs }) => {
     setMessages((prev) => [...prev, userMessage]);
     setUserInput('');
 
-    const messagesForBackend = [
-      { role: "user", content: trimmedInput }
-    ];
+    const messagesForBackend = trimmedInput;
 
     try {
       const response = await fetch("http://localhost:8000/api/incidentchat", {
